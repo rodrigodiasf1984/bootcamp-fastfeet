@@ -9,6 +9,8 @@ import DeliverymanController from './app/controllers/DeliverymanController';
 import DeliveryController from './app/controllers/DeliveryController';
 import ShowDeliveriesController from './app/controllers/ShowDeliveriesController';
 import DeliveryStatusController from './app/controllers/DeliveryStatusController';
+import PickUpDeliveryController from './app/controllers/PickUpDeliveryController';
+import DeliveryProblemController from './app/controllers/DeliveryProblemController';
 import authMidlleware from './app/middlewares/AuthMiddleware';
 import adminMidlleware from './app/middlewares/AdminUser';
 
@@ -16,13 +18,19 @@ const routes = new Router();
 const upload = multer(multerConfig);
 // Rota para listar entregas do Deliveryman
 routes.get('/deliveryman/:id/deliveries', ShowDeliveriesController.index);
+// Rota para retirar entregas => max 5 por dia
+routes.put(
+  '/deliveryman/:deliveryman_id/deliveries/:delivery_id',
+  PickUpDeliveryController.update
+);
 // Rota para finalizar a entrega
 routes.put(
   '/deliveryman/:deliveryman_id/deliveries/:delivery_id',
   upload.single('file'),
   DeliveryStatusController.update
 );
-
+// Rota para criar um problema referente a entrega
+routes.post('/delivery/:delivery_id/problems', DeliveryProblemController.store);
 // Rota para criação do utilizador, usando o método store dentro do UserController
 routes.post('/users', UserController.store);
 // Rota para login
@@ -58,5 +66,16 @@ routes.delete('/deliveries/:id', adminMidlleware, DeliveryController.delete);
 routes.put('/deliveries/:id', adminMidlleware, DeliveryController.update);
 // Rota para listar todas as encomendas Admin
 routes.get('/deliveries', adminMidlleware, DeliveryController.index);
-
+// Rota para listar entregas com problems
+routes.get(
+  '/delivery/:delivery_id/problems',
+  adminMidlleware,
+  DeliveryProblemController.index
+);
+// Rota para cancelar entregas com problems
+routes.delete(
+  '/problem/:delivery_id/cancel-delivery',
+  adminMidlleware,
+  DeliveryProblemController.delete
+);
 export default routes;
