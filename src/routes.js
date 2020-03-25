@@ -18,16 +18,16 @@ const routes = new Router();
 const upload = multer(multerConfig);
 // Rota para listar entregas do Deliveryman
 routes.get('/deliveryman/:id/deliveries', ShowDeliveriesController.index);
+// Rota para finalizar a entrega
+routes.put(
+  '/deliveryman/:deliveryman_id/deliveries_status/:delivery_id',
+  upload.single('file'),
+  DeliveryStatusController.update
+);
 // Rota para retirar entregas => max 5 por dia
 routes.put(
   '/deliveryman/:deliveryman_id/deliveries/:delivery_id',
   PickUpDeliveryController.update
-);
-// Rota para finalizar a entrega
-routes.put(
-  '/deliveryman/:deliveryman_id/deliveries/:delivery_id',
-  upload.single('file'),
-  DeliveryStatusController.update
 );
 // Rota para criar um problema referente a entrega
 routes.post('/delivery/:delivery_id/problems', DeliveryProblemController.store);
@@ -44,13 +44,15 @@ routes.put('/users', UserController.update);
 routes.post('/recipients', RecipientController.store);
 // Rota para atualizar o destinatário
 routes.put('/recipients/:id', RecipientController.update);
+//rota para listar todos os destinatários
+routes.get('/recipients', RecipientController.index);
 // Rota para fazer o upload od avatar do entregador
 routes.post('/files', upload.single('file'), FileController.store);
 // Rota para cadastrar entregadores
 routes.post('/deliverymans', adminMidlleware, DeliverymanController.store);
 // Rota para update dos entregadores
 routes.put('/deliverymans/:id', adminMidlleware, DeliverymanController.update);
-// Rota para lista todos os entregadores
+// Rota para listar todos os entregadores
 routes.get('/deliverymans', adminMidlleware, DeliverymanController.index);
 // Rota para apagar um entregador
 routes.delete(
@@ -78,4 +80,5 @@ routes.delete(
   adminMidlleware,
   DeliveryProblemController.delete
 );
+
 export default routes;

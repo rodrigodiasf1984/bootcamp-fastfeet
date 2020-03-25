@@ -1,12 +1,34 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Deliveryman from '../models/Deliveryman';
 import File from '../models/File';
 
 class DeliverymanController {
   async index(req, res) {
     // paginação, mostra 20 resultados por página
-    const { page = 1 } = req.query; // caso não seja informado o número da página, por padrão será a página 1
+    const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
 
+    if (q) {
+      // buscar o deliveryman de acordo com o nome
+      const deliverymanbyName = await Deliveryman.findAll({
+        where: {
+          name: {
+            [Op.iLike]: `${q}%`,
+          },
+        },
+        attributes: ['id', 'name', 'email'],
+        limit: 20, // lista somente 20 resultados
+        offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+        include: [
+          {
+            model: File,
+            as: 'avatar',
+            attributes: ['id', 'path', 'url'],
+          },
+        ],
+      });
+      return res.json(deliverymanbyName);
+    }
     // retorna a lista de agendamento do utlizador que fez a requisição
     const listDeliverymans = await Deliveryman.findAll({
       attributes: ['id', 'name', 'email'],

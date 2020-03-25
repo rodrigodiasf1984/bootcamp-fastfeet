@@ -17,12 +17,19 @@ class DeliveryStatusController {
         .positive()
         .required(),
     });
-    if (
-      !(await schema.isValid(req.query)) ||
-      !(await schemaParamd.isValid(req.params))
-    ) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
+
+    // if (
+    //   !(await schema.isValid(req.query)) ||
+    //   !(await schemaParamd.isValid(req.params))
+    // ) {
+    //   return res.status(400).json({ error: 'Validation fails' });
+    // }
+    await schema.validate(req.query).catch(function(err) {
+      return res.status(400).json(`{${err.name} : ${err.errors} }`);
+    });
+    await schemaParamd.isValid(req.params).catch(function(err) {
+      return res.status(400).json(`{${err.name} : ${err.errors} }`);
+    });
 
     const { deliveryman_id, delivery_id } = req.params;
     const deliveryman = await Deliveryman.findByPk(deliveryman_id);

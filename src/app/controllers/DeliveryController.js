@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import { parseISO, getHours, isBefore } from 'date-fns';
+import { Op } from 'sequelize';
 import File from '../models/File';
 import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
@@ -188,7 +189,52 @@ class DeliveryController {
   }
 
   async index(req, res) {
-    const { page = 1 } = req.query; // caso não seja informado o número da página, por padrão será a página 1
+    const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
+    if (q) {
+      // buscar o deliveryman de acordo com o nome
+      const deliveryByName = await Delivery.findAll({
+        where: {
+          product: {
+            [Op.iLike]: `${q}%`,
+          },
+        },
+        order: ['created_at'],
+        attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],
+        limit: 20, // lista somente 20 resultados
+        offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+        include: [
+          // include faz o relacionamento entre o entrega e o entregador
+          {
+            model: Deliveryman,
+            as: 'deliveryman',
+            attributes: ['id', 'name'], // retorna somente os campos dentro do array attributes
+            include: [
+              {
+                model: File,
+                as: 'avatar', // as: avatar
+                attributes: ['id', 'path', 'url'],
+              },
+            ],
+          },
+          {
+            model: Recipient,
+            as: 'recipient',
+            attributes: [
+              'id',
+              'name',
+              'street',
+              'street_number',
+              'complement',
+              'uf',
+              'city',
+              'postal_code',
+            ],
+          },
+        ],
+      });
+      return res.json(deliveryByName);
+    }
+
     const listDeliveries = await Delivery.findAll({
       order: ['created_at'],
       attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],

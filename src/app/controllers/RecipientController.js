@@ -1,7 +1,55 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Recipient from '../models/Recipient';
 
 class RecipientController {
+  async index(req, res) {
+    // paginação, mostra 20 resultados por página
+    const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
+
+    if (q) {
+      // buscar o recipient de acordo com o nome
+      const recipientByName = await Recipient.findAll({
+        where: {
+          name: {
+            [Op.iLike]: `${q}%`,
+          },
+        },
+        order: ['created_at'],
+        attributes: [
+          'id',
+          'name',
+          'street',
+          'street_number',
+          'complement',
+          'uf',
+          'city',
+          'postal_code',
+        ],
+        limit: 20, // lista somente 20 resultados
+        offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+      });
+      return res.json(recipientByName);
+    }
+    // retorna a lista de agendamento do utlizador que fez a requisição
+    const listRecipients = await Recipient.findAll({
+      order: ['created_at'],
+      attributes: [
+        'id',
+        'name',
+        'street',
+        'street_number',
+        'complement',
+        'uf',
+        'city',
+        'postal_code',
+      ],
+      limit: 20, // lista somente 20 resultados
+      offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+    });
+    return res.json(listRecipients);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
