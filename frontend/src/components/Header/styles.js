@@ -5,11 +5,13 @@ export const Container = styled.div`
   background: #fff;
   padding: 0 30px;
   border: 1px solid #dddddd;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 `;
 
 export const Content = styled.div`
   height: 64px;
-  max-width: 900px;
+
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -32,12 +34,12 @@ export const Content = styled.div`
       margin-right: 10px;
       transition: color 0.2s;
 
-      &:hover {
-        color: ${darken(0.4, '#999')};
+      &:active {
+        color: ${darken(1, '#000')};
       }
 
-      &:active {
-        color: ${darken(1, '#999')};
+      &:hover {
+        color: ${darken(0.4, '#999')};
       }
     }
   }

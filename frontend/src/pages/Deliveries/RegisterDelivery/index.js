@@ -82,31 +82,31 @@ export default function RegisterDelivery() {
   }
 
   async function saveNewDelivery() {
-    try {
-      // const recipient_id = selectedRecipient.id;
-      // const deliveryman_id = selectDeliveryman.id;
+    // const recipient_id = selectedRecipient.id;
+    // const deliveryman_id = selectDeliveryman.id;
 
-      // console.tron.log(recipient_id, deliveryman_id, productInput);
-      // const schema = Yup.object().shape({
-      //   deliveryman_id: Yup.string().required('O entregador é obrigatório'),
-      //   recipient_id: Yup.string().required('O destinatário é obrigatório'),
-      //   productInput: Yup.string().required('O nome do produto é obrigatório'),
-      // });
-      // console.log(schema);
-      // if (!(await schema.isValid())) {
-      //   return toast.error('Validation fails');
-      // }
+    // const schema = Yup.object().shape({
+    //   deliveryman_id: Yup.string().required('O entregador é obrigatório'),
+    //   recipient_id: Yup.string().required('O destinatário é obrigatório'),
+    //   productInput: Yup.string().required('O nome do produto é obrigatório'),
+    // });
 
-      await api.put(`/deliveries`, {
+    // if (!(await schema.isValid(productInput, recipient_id, deliveryman_id))) {
+    //   toast.error('Validation fails');
+    // }
+
+    api
+      .post('deliveries', {
         product: productInput,
         recipient_id: selectedRecipient.id,
         deliveryman_id: selectDeliveryman.id,
+      })
+      .then(() => {
+        toast.success('Encomenda cadastrada com sucesso!');
+      })
+      .catch((err) => {
+        console.tron.log(err.response);
       });
-
-      return toast.sucess('Encomenda criada com sucesso!');
-    } catch (error) {
-      return toast.error('Erro ao cadastrar a encomenda');
-    }
   }
 
   return (

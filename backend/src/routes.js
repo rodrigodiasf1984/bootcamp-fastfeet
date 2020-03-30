@@ -44,7 +44,7 @@ routes.put('/users', UserController.update);
 routes.post('/recipients', RecipientController.store);
 // Rota para atualizar o destinatário
 routes.put('/recipients/:id', RecipientController.update);
-//rota para listar todos os destinatários
+// rota para listar todos os destinatários
 routes.get('/recipients', RecipientController.index);
 // Rota para fazer o upload od avatar do entregador
 routes.post('/files', upload.single('file'), FileController.store);
@@ -70,11 +70,11 @@ routes.put('/deliveries/:id', adminMidlleware, DeliveryController.update);
 routes.get('/deliveries', adminMidlleware, DeliveryController.index);
 // Rota para listar entregas com problems
 routes.get(
-  '/delivery/:delivery_id/problems',
+  '/delivery/problems',
   adminMidlleware,
   DeliveryProblemController.index
 );
-// Rota para cancelar entregas com problems
+// // Rota para cancelar entregas com problems
 routes.delete(
   '/problem/:delivery_id/cancel-delivery',
   adminMidlleware,
