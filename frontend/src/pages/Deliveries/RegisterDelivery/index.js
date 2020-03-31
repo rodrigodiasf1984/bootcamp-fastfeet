@@ -94,19 +94,28 @@ export default function RegisterDelivery() {
     // if (!(await schema.isValid(productInput, recipient_id, deliveryman_id))) {
     //   toast.error('Validation fails');
     // }
+    const response = await api.get('deliveries', {
+      params: {
+        q: productInput,
+      },
+    });
 
-    api
-      .post('deliveries', {
-        product: productInput,
-        recipient_id: selectedRecipient.id,
-        deliveryman_id: selectDeliveryman.id,
-      })
-      .then(() => {
-        toast.success('Encomenda cadastrada com sucesso!');
-      })
-      .catch((err) => {
-        console.tron.log(err.response);
-      });
+    if (!response.data) {
+      await api
+        .post('deliveries', {
+          product: productInput,
+          recipient_id: selectedRecipient.id,
+          deliveryman_id: selectDeliveryman.id,
+        })
+        .then(() => {
+          toast.success('Encomenda cadastrada com sucesso!');
+        })
+        .catch((err) => {
+          console.tron.log(err.response);
+        });
+    } else {
+      toast.error('Já existe uma encomenda para o produto  digitado');
+    }
   }
 
   return (

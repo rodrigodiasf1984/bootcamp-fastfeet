@@ -1,168 +1,101 @@
 import React, { useState, useEffect } from 'react';
-import { MdDone, MdKeyboardArrowLeft } from 'react-icons/md';
-import AsyncSelect from 'react-select/async';
-import { toast } from 'react-toastify';
-import * as Yup from 'yup';
+import { MdAdd } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-
 import {
   Container,
+  SubmitButton,
+  DeliveryManName,
+  List,
+  ListHeader,
+  ListMain,
+  ListActions,
   Title,
-  ContentForm,
-  ContentItem,
-  ContentProduct,
+  AvatarIcon,
 } from './styles';
+import SearchInput from '~/components/SearchInput';
+import DropdownMenu from '~/components/DropdownMenu';
 
-import Button from '~/components/Button';
-import DefaultInput from '~/components/DefaultInput';
 import api from '~/services/api';
 
-export default function RegisterDelivery() {
-  const [productInput, setProductInput] = useState([]);
-  const [recipients, setRecipients] = useState([]);
+export default function Deliveries() {
   const [deliverymans, setDeliverymans] = useState([]);
-  const [selectedRecipient, setSelectedRecipient] = useState([]);
-  const [selectDeliveryman, setSelectedDeliveryman] = useState([]);
+  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    async function loadData() {
-      const responseRecipients = await api.get('recipients');
-      const responseDeliveryMans = await api.get('deliverymans');
-
-      setRecipients(
-        responseRecipients.data.map((recipient) => ({
-          id: recipient.id,
-          label: recipient.name,
-          value: recipient.name.toUpperCase(),
-        }))
-      );
-
-      setDeliverymans(
-        responseDeliveryMans.data.map((deliveryman) => ({
-          id: deliveryman.id,
-          label: deliveryman.name,
-          value: deliveryman.name.toUpperCase(),
-        }))
-      );
-    }
-    loadData();
-  }, []);
-
-  async function searchDeliverymans(inputValue, callback) {
+  async function searchDeliverymans() {
     const response = await api.get('deliverymans', {
       params: {
-        q: inputValue,
-      },
-    });
-    const filterDeliveryman = response.data.map((deliveryman) => ({
-      value: deliveryman.id,
-      label: deliveryman.name,
-    }));
-
-    callback(filterDeliveryman);
-  }
-
-  async function searchRecipient(inputValue, callback) {
-    const response = await api.get('recipients', {
-      params: {
-        q: inputValue,
+        page,
+        q: '',
       },
     });
 
-    const filterRecipient = response.data.map((recipient) => ({
-      value: recipient.id,
-      label: recipient.name,
-    }));
-
-    callback(filterRecipient);
+    setDeliverymans(response.data);
   }
-
-  function handleInputproduct(e) {
-    setProductInput(e.target.value);
-  }
-
-  async function saveNewDelivery() {
-    try {
-      // const recipient_id = selectedRecipient.id;
-      // const deliveryman_id = selectDeliveryman.id;
-
-      // console.tron.log(recipient_id, deliveryman_id, productInput);
-      // const schema = Yup.object().shape({
-      //   deliveryman_id: Yup.string().required('O entregador é obrigatório'),
-      //   recipient_id: Yup.string().required('O destinatário é obrigatório'),
-      //   productInput: Yup.string().required('O nome do produto é obrigatório'),
-      // });
-      // console.log(schema);
-      // if (!(await schema.isValid())) {
-      //   return toast.error('Validation fails');
-      // }
-
-      await api.put(`/deliveries`, {
-        product: productInput,
-        recipient_id: selectedRecipient.id,
-        deliveryman_id: selectDeliveryman.id,
-      });
-
-      return toast.sucess('Encomenda criada com sucesso!');
-    } catch (error) {
-      return toast.error('Erro ao cadastrar a encomenda');
-    }
-  }
+  useEffect(() => {
+    searchDeliverymans();
+  }, [page]);
 
   return (
     <>
       <Title>
         <header>
-          <h1>Cadastro de encomendas</h1>
+          <h1>Gerenciando entregadores</h1>
         </header>
       </Title>
       <Container>
-        <Link to="/Deliveries">
-          <Button background="#CCCCCC">
-            <MdKeyboardArrowLeft color="#fff" size={25} />
-            <strong>VOLTAR</strong>
-          </Button>
+        <SearchInput placeholder="Buscar entregadores" />
+        <Link to="/RegisterDeliverymans">
+          <SubmitButton>
+            <MdAdd color="#fff" size={25} />
+            <strong>CADASTRAR</strong>
+          </SubmitButton>
         </Link>
-        <Button background="#7159c1" onClick={saveNewDelivery}>
-          <MdDone color="#fff" size={25} />
-          <strong>SALVAR</strong>
-        </Button>
       </Container>
-      <ContentForm>
-        <ContentItem>
-          <strong>Destinatário</strong>
-          <AsyncSelect
-            defaultOptions={recipients}
-            onChange={setSelectedRecipient}
-            placeholder="Selecione o destinatário"
-            isSearchable
-            loadOptions={searchRecipient}
-            noOptionsMessage={() => 'Destinatário não encontrado'}
-          />
-        </ContentItem>
-        <ContentItem>
-          <strong>Entregador</strong>
-          <AsyncSelect
-            defaultOptions={deliverymans}
-            placeholder="Selecione o Entregador"
-            onChange={setSelectedDeliveryman}
-            isSearchable
-            loadOptions={searchDeliverymans}
-            noOptionsMessage={() => 'Entregador não encontrado!'}
-            onChage={setDeliverymans}
-          />
-        </ContentItem>
-        <ContentProduct>
-          <strong>Nome do produto</strong>
-          <DefaultInput
-            name="productInput"
-            type="text"
-            value={productInput}
-            onChange={handleInputproduct}
-            placeholder="Digite o nome da encomenda"
-          />
-        </ContentProduct>
-      </ContentForm>
+
+      <List>
+        <ListHeader>
+          <span>ID</span>
+        </ListHeader>
+        <ListHeader>
+          <span>Foto</span>
+        </ListHeader>
+        <ListHeader>
+          <span>Nome</span>
+        </ListHeader>
+        <ListHeader>
+          <span>Email</span>
+        </ListHeader>
+        <ListHeader>
+          <span>Ações</span>
+        </ListHeader>
+
+        {deliverymans.map((deliveryman) => (
+          <>
+            <ListMain key={deliveryman.id}>
+              <span>#{deliveryman.id}</span>
+            </ListMain>
+            <ListMain>
+              {/* <AvatarIcon
+                size={40}
+                round
+                id={deliveryman.avatar.id}
+                src={deliveryman.avatar.url}
+              /> */}
+
+              <AvatarIcon size={36} round name={deliveryman.name} />
+            </ListMain>
+            <ListMain>
+              <DeliveryManName>{deliveryman.name}</DeliveryManName>
+            </ListMain>
+            <ListMain>
+              <span>{deliveryman.email}</span>
+            </ListMain>
+            <ListActions>
+              <DropdownMenu inPackages />
+            </ListActions>
+          </>
+        ))}
+      </List>
     </>
   );
 }
