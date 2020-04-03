@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Content, Profile } from './styles';
 import { signOut } from '~/store/modules/auth/actions';
@@ -18,10 +18,10 @@ export default function Header() {
       <Content>
         <nav>
           <img src={logo} alt="FastFeet" />
-          <Link to="/deliveries">ENCOMENDAS</Link>
-          <Link to="/deliverymans">ENTREGADORES</Link>
-          <Link to="/recipients">DESTINATÁRIOS</Link>
-          <Link to="/deliveryProblems">PROBLEMAS</Link>
+          <NavLink to="/deliveries" activeStyle={{color:'#444444'}}>ENCOMENDAS</NavLink>
+          <NavLink to="/deliverymans" activeStyle={{color:'#444444'}}>ENTREGADORES</NavLink>
+          <NavLink to="/recipients" activeStyle={{color:'#444444'}}>DESTINATÁRIOS</NavLink>
+          <NavLink to="/deliveryProblems" activeStyle={{color:'#444444'}}>PROBLEMAS</NavLink>
         </nav>
         <Profile>
           <div>

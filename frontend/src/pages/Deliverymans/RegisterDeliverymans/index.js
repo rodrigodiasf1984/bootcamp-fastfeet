@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { MdDone, MdKeyboardArrowLeft } from 'react-icons/md';
-import { Form, Input } from '@rocketseat/unform';
+import { Form } from '@rocketseat/unform';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
@@ -22,6 +21,7 @@ import AvatarInput from '../AvatarInput';
 export default function RegisterDeliverymans() {
   const [nameInput, setNameInput] = useState([]);
   const [emailInput, setEmailInput] = useState([]);
+  // const [avatar_id, setAvatar_id]=useState([]);
 
   function handleInputName(e) {
     setNameInput(e.target.value);
@@ -29,44 +29,44 @@ export default function RegisterDeliverymans() {
   function handleInputEmail(e) {
     setEmailInput(e.target.value);
   }
+  // function handleAvatarId(){
+  //   setAvatar_id(document.getElementById("avatar").dataset.file)
+  // }
+
+  const schema = Yup.object().shape({
+    nameInput: Yup.string().required('O nome é obrigatório'),
+    emailInput: Yup.string().email().required('O email é obrigatório'),
+
+  });
 
   async function saveNewDeliveryman() {
-    // const recipient_id = selectedRecipient.id;
-    // const deliveryman_id = selectDeliveryman.id;
 
-    // const schema = Yup.object().shape({
-    //   deliveryman_id: Yup.string().required('O entregador é obrigatório'),
-    //   recipient_id: Yup.string().required('O destinatário é obrigatório'),
-    //   productInput: Yup.string().required('O nome do produto é obrigatório'),
-    // });
+     schema.validate({
+      nameInput ,
+      emailInput ,
+    }, {abortEarly: false}).then(valid => {
+      console.tron.log('valid:', valid)
+    }).catch(err => {
+      console.tron.log('err:', err.errors)
+    })
 
-    // if (!(await schema.isValid(productInput, recipient_id, deliveryman_id))) {
-    //   toast.error('Validation fails');
-    // }
-    const response = await api.get('deliverymans', {
-      params: {
-        q: nameInput,
-      },
+    const avatar_id=document.getElementById("avatar").dataset.file;
+    console.tron.log(nameInput, emailInput, avatar_id);
+    await api
+    .post('deliverymans', {
+      name: nameInput,
+      email: emailInput,
+      avatar_id: avatar_id,
+    })
+    .then(() => {
+      toast.success('Entregador cadastrado com sucesso!');
+    })
+    .catch((err) => {
+      console.tron.log(err.response);
+      toast.error(err.response.data.error);
     });
-    console.tron.log(response.data);
-    if (!response.data || response.data === undefined) {
-      await api
-        .post('deliverymans', {
-          name: nameInput,
-          email: emailInput,
-          avatar_id: '',
-        })
-        .then(() => {
-          toast.success('Entragador cadastrado com sucesso!');
-        })
-        .catch((err) => {
-          console.tron.log(err.response);
-        });
-    } else {
-      toast.error('Já existe um entregador com esse nome');
-    }
-  }
 
+  }
   return (
     <>
       <Title>
@@ -74,7 +74,7 @@ export default function RegisterDeliverymans() {
           <h1>Cadastro de entregadores</h1>
         </header>
       </Title>
-      <Form onSubmit={saveNewDeliveryman}>
+      <Form  schema={schema} onSubmit={saveNewDeliveryman}>
         <Container>
           <Link to="/Deliverymans">
             <Button background="#CCCCCC">
@@ -121,3 +121,4 @@ export default function RegisterDeliverymans() {
     </>
   );
 }
+

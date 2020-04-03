@@ -4,7 +4,7 @@ import { Container, Button } from './styles';
 export default function ButtonDone({ ...rest }) {
   return (
     <Container>
-      <Button {...rest} />
+      <Button type="submit" {...rest} />
     </Container>
   );
 }

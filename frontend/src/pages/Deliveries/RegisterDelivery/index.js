@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import {useSelector} from 'react-redux';
 import { MdDone, MdKeyboardArrowLeft } from 'react-icons/md';
 import AsyncSelect from 'react-select/async';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
+import { Form } from '@rocketseat/unform';
 
 import {
   Container,
@@ -18,35 +20,55 @@ import DefaultInput from '~/components/DefaultInput';
 import api from '~/services/api';
 
 export default function RegisterDelivery() {
-  const [productInput, setProductInput] = useState([]);
+  const [productInput, setProductInput] = useState('');
   const [recipients, setRecipients] = useState([]);
+  const [currentRecipients, setCurrentRecipients] = useState(null);
+  const [currentDeliveryman, setCurrentDeliverymans] = useState(null);
   const [deliverymans, setDeliverymans] = useState([]);
-  const [selectedRecipient, setSelectedRecipient] = useState([]);
-  const [selectDeliveryman, setSelectedDeliveryman] = useState([]);
+  const [selectedRecipient, setSelectedRecipient] = useState({});
+  const [selectDeliveryman, setSelectedDeliveryman] = useState({});
+
+  const delivery= useSelector(state=>state.edit.editState);
 
   useEffect(() => {
     async function loadData() {
+      if(delivery){
+        setProductInput(delivery.product);
+        console.tron.log(delivery)
+        const currentRecipients={
+          label:delivery.recipient.name,
+          value:delivery.recipient.id,
+        }
+        setCurrentRecipients(currentRecipients);
+
+        const currentDeliveryman ={
+          label: delivery.deliveryman.name,
+          value: delivery.deliveryman.id,
+        }
+        setCurrentDeliverymans(currentDeliveryman);
+      }
       const responseRecipients = await api.get('recipients');
       const responseDeliveryMans = await api.get('deliverymans');
 
       setRecipients(
         responseRecipients.data.map((recipient) => ({
-          id: recipient.id,
           label: recipient.name,
-          value: recipient.name.toUpperCase(),
+          value: recipient.id,
         }))
       );
 
       setDeliverymans(
         responseDeliveryMans.data.map((deliveryman) => ({
-          id: deliveryman.id,
           label: deliveryman.name,
-          value: deliveryman.name.toUpperCase(),
+          value: deliveryman.id,
         }))
       );
     }
-    loadData();
-  }, []);
+      loadData();
+    }, []);
+
+    // console.log(currentRecipients, 'Recipients');
+    // console.log(currentDeliveryman, 'Deliverymans')
 
   async function searchDeliverymans(inputValue, callback) {
     const response = await api.get('deliverymans', {
@@ -54,6 +76,7 @@ export default function RegisterDelivery() {
         q: inputValue,
       },
     });
+
     const filterDeliveryman = response.data.map((deliveryman) => ({
       value: deliveryman.id,
       label: deliveryman.name,
@@ -81,97 +104,120 @@ export default function RegisterDelivery() {
     setProductInput(e.target.value);
   }
 
+  function handleSelectedDeliveryman(){
+    const deliveryman=document.getElementById("react-select-2-input").value;
+    setCurrentDeliverymans(deliveryman.id);
+  }
+
+  const schema = Yup.object().shape({
+    productInput: Yup.string().required('O produto é obrigatório'),
+    recipient_id: Yup.array().required('O destinatário é obrigatório'),
+    deliveryman_id: Yup.array().required('O entregador é obrigatório'),
+  });
+
   async function saveNewDelivery() {
-    // const recipient_id = selectedRecipient.id;
-    // const deliveryman_id = selectDeliveryman.id;
+    schema.validate({
+      product:productInput,
+      recipient_id:selectedRecipient.id,
+      deliveryman_id:selectDeliveryman.id,
+    }, {abortEarly: false}).then(valid => {
+      console.tron.log('valid:', valid)
+    }).catch(err => {
+      console.tron.log('err:', err.errors)
+      err.errors.forEach(error => {
+        toast.error(error);
+      });
+    })
 
-    // const schema = Yup.object().shape({
-    //   deliveryman_id: Yup.string().required('O entregador é obrigatório'),
-    //   recipient_id: Yup.string().required('O destinatário é obrigatório'),
-    //   productInput: Yup.string().required('O nome do produto é obrigatório'),
-    // });
-
-    // if (!(await schema.isValid(productInput, recipient_id, deliveryman_id))) {
-    //   toast.error('Validation fails');
-    // }
-    const response = await api.get('deliveries', {
-      params: {
-        q: productInput,
-      },
-    });
-
-    if (!response.data) {
-      await api
-        .post('deliveries', {
-          product: productInput,
-          recipient_id: selectedRecipient.id,
-          deliveryman_id: selectDeliveryman.id,
+      if(delivery){
+        await api.put(`/deliveries/${delivery.id}`,{
+          product:productInput,
+          recipient_id:selectedRecipient.id,
+          deliveryman_id:selectDeliveryman.id,
         })
-        .then(() => {
-          toast.success('Encomenda cadastrada com sucesso!');
+        .then(()=>{
+          toast.success('Encomenda atualizada com sucesso!');
         })
-        .catch((err) => {
+        .catch((err)=>{
           console.tron.log(err.response);
+          toast.error(err.response);
         });
-    } else {
-      toast.error('Já existe uma encomenda para o produto  digitado');
-    }
+      }
+
+      // await api
+      //   .post('deliveries', {
+      //     product: productInput,
+      //     recipient_id: selectedRecipient.id,
+      //     deliveryman_id: selectDeliveryman.id,
+      //   })
+      //   .then(() => {
+      //     toast.success('Encomenda cadastrada com sucesso!');
+      //   })
+      //   .catch((err) => {
+      //     console.tron.log(err.response);
+      //     toast.error(err.response);
+      //   });
   }
 
   return (
     <>
       <Title>
         <header>
-          <h1>Cadastro de encomendas</h1>
+          {delivery === null ? <h1>Cadastro de encomendas</h1> : <h1>Edição da encomenda</h1>}
         </header>
       </Title>
+      <Form schema={schema}>
       <Container>
-        <Link to="/Deliveries">
-          <Button background="#CCCCCC">
-            <MdKeyboardArrowLeft color="#fff" size={25} />
-            <strong>VOLTAR</strong>
+          <Link to="/Deliveries">
+            <Button background="#CCCCCC">
+              <MdKeyboardArrowLeft color="#fff" size={25} />
+              <strong>VOLTAR</strong>
+            </Button>
+          </Link>
+          <Button background="#7159c1" onClick={saveNewDelivery}>
+            <MdDone color="#fff" size={25} />
+            <strong>SALVAR</strong>
           </Button>
-        </Link>
-        <Button background="#7159c1" onClick={saveNewDelivery}>
-          <MdDone color="#fff" size={25} />
-          <strong>SALVAR</strong>
-        </Button>
-      </Container>
-      <ContentForm>
-        <ContentItem>
-          <strong>Destinatário</strong>
-          <AsyncSelect
-            defaultOptions={recipients}
-            onChange={setSelectedRecipient}
-            placeholder="Selecione o destinatário"
-            isSearchable
-            loadOptions={searchRecipient}
-            noOptionsMessage={() => 'Destinatário não encontrado'}
-          />
-        </ContentItem>
-        <ContentItem>
-          <strong>Entregador</strong>
-          <AsyncSelect
-            defaultOptions={deliverymans}
-            placeholder="Selecione o Entregador"
-            onChange={setSelectedDeliveryman}
-            isSearchable
-            loadOptions={searchDeliverymans}
-            noOptionsMessage={() => 'Entregador não encontrado!'}
-            onChage={setDeliverymans}
-          />
-        </ContentItem>
-        <ContentProduct>
-          <strong>Nome do produto</strong>
-          <DefaultInput
-            name="productInput"
-            type="text"
+        </Container>
+        <ContentForm>
+          <ContentItem>
+            <strong>Destinatário</strong>
+            <AsyncSelect
+              value={currentRecipients}
+              defaultOptions={recipients}
+              onChange={handleSelectedDeliveryman}
+              placeholder="Selecione o destinatário"
+              isSearchable
+              loadOptions={searchRecipient}
+              noOptionsMessage={() => 'Destinatário não encontrado'}
+              />
+          </ContentItem>
+          <ContentItem>
+            <strong>Entregador</strong>
+            <AsyncSelect
+              value={currentDeliveryman}
+              defaultOptions={deliverymans}
+              placeholder="Selecione o Entregador"
+              onChange={setSelectedDeliveryman}
+              isSearchable
+              loadOptions={searchDeliverymans}
+              noOptionsMessage={() => 'Entregador não encontrado!'}
+              onChage={setDeliverymans}
+              />
+          </ContentItem>
+          <ContentProduct>
+            <strong>Nome do produto</strong>
+            <DefaultInput
             value={productInput}
-            onChange={handleInputproduct}
-            placeholder="Digite o nome da encomenda"
-          />
-        </ContentProduct>
-      </ContentForm>
+              name="productInput"
+              type="text"
+              value={productInput}
+              onChange={handleInputproduct}
+              placeholder="Digite o nome da encomenda"
+              />
+          </ContentProduct>
+        </ContentForm>
+      </Form>
     </>
   );
 }

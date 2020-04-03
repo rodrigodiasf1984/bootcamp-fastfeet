@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { darken } from 'polished';
 
 export const Container = styled.div``;
-export const Button = styled.div.attrs((props) => ({
+export const Button = styled.button.attrs((props) => ({
   backgroundButton: props.background,
 }))`
   display: flex;
@@ -28,6 +28,7 @@ export const Button = styled.div.attrs((props) => ({
   }
 
   &:hover {
+    /* background: ${props =>darken(0.03, props.background)}; */
     background: ${darken(0.03, '#7159c1')};
   }
 

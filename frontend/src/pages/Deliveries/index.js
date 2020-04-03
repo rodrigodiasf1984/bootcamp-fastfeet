@@ -15,14 +15,16 @@ import {
 } from './styles';
 import SearchInput from '~/components/SearchInput';
 import DropdownMenu from '~/components/DropdownMenu';
-
 import api from '~/services/api';
+import Modal from '~/components/DeliveryModal';
 
 export default function Deliveries() {
-  const [packages, setPackages] = useState([]);
+  const [deliveries, setDeliveries] = useState([]);
   const [page, setPage] = useState(1);
+  const[ modalIsOpen, setModalIsOpen]=useState(false);
+  const[modalData, setModalData]=useState({});
 
-  async function searchPackages() {
+  async function searchDeliveries() {
     const response = await api.get('deliveries', {
       params: {
         page,
@@ -49,14 +51,43 @@ export default function Deliveries() {
       return delivery;
     });
 
-    setPackages(response.data);
+    setDeliveries(response.data);
   }
   useEffect(() => {
-    searchPackages();
+    searchDeliveries();
   }, [page]);
+
+  function handleRequestClose(){
+    setModalIsOpen(false);
+  }
+
+  function handleRequestOpen(delivery){
+
+    const{product, recipient, start_date, end_date, signature}=delivery;
+    const deliveryData={
+      product,
+      street:recipient.street,
+      street_number:recipient.street_number,
+      complement: recipient.complement,
+      uf:recipient.uf,
+      city:recipient.city,
+      postal_code:recipient.postal_code,
+      start_date,
+      end_date,
+      //signature_url:signature === null ? null : signature.url,
+
+    }
+    setModalIsOpen(true);
+    setModalData(deliveryData);
+  }
 
   return (
     <>
+    <Modal
+      closeModal={handleRequestClose}
+      modalIsOpen={modalIsOpen}
+      deliveryData={modalData}
+    />
       <Title>
         <header>
           <h1>Gerenciamento de encomendas</h1>
@@ -95,7 +126,7 @@ export default function Deliveries() {
           <span>Ações</span>
         </ListHeader>
 
-        {packages.map((delivery) => (
+        {deliveries.map((delivery) => (
           <>
             <ListMain key={delivery.id}>
               <span>#{delivery.id}</span>
@@ -119,10 +150,9 @@ export default function Deliveries() {
               <DeliveryStatus status={delivery.status}>
                 {delivery.status}
               </DeliveryStatus>
-              {console.tron.log(delivery.status)}
             </ListMain>
             <ListActions>
-              <DropdownMenu inPackages />
+              <DropdownMenu deliveries delivery={delivery} openModalFunction={handleRequestOpen}/>
             </ListActions>
           </>
         ))}

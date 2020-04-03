@@ -75,14 +75,15 @@ export default function Deliveries() {
               <span>#{deliveryman.id}</span>
             </ListMain>
             <ListMain>
-              {/* <AvatarIcon
+
+              <AvatarIcon
                 size={40}
                 round
                 id={deliveryman.avatar.id}
-                src={deliveryman.avatar.url}
-              /> */}
+                 src={deliveryman.avatar.url}
+              />
 
-              <AvatarIcon size={36} round name={deliveryman.name} />
+              {/* <AvatarIcon size={36} round name={deliveryman.name} /> */}
             </ListMain>
             <ListMain>
               <DeliveryManName>{deliveryman.name}</DeliveryManName>
@@ -91,7 +92,7 @@ export default function Deliveries() {
               <span>{deliveryman.email}</span>
             </ListMain>
             <ListActions>
-              <DropdownMenu inPackages />
+              <DropdownMenu inPackages={deliverymans} />
             </ListActions>
           </>
         ))}

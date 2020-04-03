@@ -29,7 +29,13 @@ class RecipientController {
         limit: 20, // lista somente 20 resultados
         offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
       });
-      return res.json(recipientByName);
+
+      if(recipientByName.length>0){
+        return res.json(recipientByName);
+      }
+      else{
+        return res.status(400).json("Recipient does not exists");
+      }
     }
     // retorna a lista de agendamento do utlizador que fez a requisição
     const listRecipients = await Recipient.findAll({

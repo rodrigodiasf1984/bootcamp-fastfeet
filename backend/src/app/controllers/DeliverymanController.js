@@ -27,6 +27,10 @@ class DeliverymanController {
           },
         ],
       });
+
+      if(deliverymanbyName.length === 0){
+        return res.status(400).json({ error: 'User does not exist' });
+      }
       return res.json(deliverymanbyName);
     }
     // retorna a lista de agendamento do utlizador que fez a requisição

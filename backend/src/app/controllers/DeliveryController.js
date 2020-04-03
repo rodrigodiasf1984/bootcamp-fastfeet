@@ -232,6 +232,10 @@ class DeliveryController {
           },
         ],
       });
+
+      if(deliveryByName.length===0){
+        return res.status(400).json('Delivery does not exists')
+      }
       return res.json(deliveryByName);
     }
 
