@@ -13,7 +13,7 @@ import {
 } from './styles';
 import SearchInput from '~/components/SearchInput';
 import DropdownMenu from '~/components/DropdownMenu';
-
+import { toast } from 'react-toastify';
 import api from '~/services/api';
 
 export default function Recipients() {
@@ -33,6 +33,19 @@ export default function Recipients() {
   useEffect(() => {
     searchRecipient();
   }, [page]);
+
+  async function handleDeleteRecipient(deleteRecipient){
+    console.tron.log(deleteRecipient, 'apagar');
+    await api.delete(`/recipients/${deleteRecipient.id}`)
+    .then(()=>{
+      toast.success('Destinatário apagado com sucesso!');
+      searchRecipient();
+    })
+    .catch((err)=>{
+      console.tron.log(err.response);
+      toast.error(err.response);
+    });
+  }
 
   return (
     <>
@@ -64,13 +77,11 @@ export default function Recipients() {
         <ListHeader>
           <span>Ações</span>
         </ListHeader>
-
         {recipients.map((recipient) => (
           <>
             <ListMain key={recipient.id}>
               <span>#{recipient.id}</span>
             </ListMain>
-
             <ListMain>
               <RecipientName>{recipient.name}</RecipientName>
             </ListMain>
@@ -80,9 +91,8 @@ export default function Recipients() {
                 {recipient.complement}, {recipient.city}, {recipient.uf}
               </span>
             </ListMain>
-
             <ListActions>
-              <DropdownMenu inPackages />
+              <DropdownMenu inRecipients recipient={recipient} editData={recipient} handleDelete={handleDeleteRecipient}/>
             </ListActions>
           </>
         ))}

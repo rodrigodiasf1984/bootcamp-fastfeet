@@ -217,6 +217,11 @@ class DeliveryController {
             ],
           },
           {
+            model:File,
+            as:'signature',
+            attributes: ['name', 'path', 'url'],
+          },
+          {
             model: Recipient,
             as: 'recipient',
             attributes: [
@@ -257,6 +262,11 @@ class DeliveryController {
               attributes: ['id', 'path', 'url'],
             },
           ],
+        },
+        {
+          model:File,
+          as:'signature',
+          attributes: ['name', 'path', 'url'],
         },
         {
           model: Recipient,

@@ -171,5 +171,28 @@ class RecipientController {
       postal_code,
     });
   }
+
+  async delete(req, res) {
+    const schemaParam = Yup.object(req.params).shape({
+      id: Yup.number()
+        .positive()
+        .required(),
+    });
+
+    if (!(await schemaParam.isValid(req.params))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+    const recipient = await Recipient.findByPk(req.params.id);
+    if (!recipient) {
+      return res.status(400).json({ error: 'Recipient does not exists.' });
+    }
+    try {
+      await recipient.destroy();
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+
+    return res.status(200).json({ message: 'Recipient deleted!' });
+  }
 }
 export default new RecipientController();

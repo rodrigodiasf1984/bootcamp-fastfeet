@@ -41,9 +41,15 @@ routes.use(authMidlleware);
 // Rota para update do user
 routes.put('/users', UserController.update);
 // Rota para criar novo destinatário
-routes.post('/recipients', RecipientController.store);
+routes.post('/recipients', adminMidlleware, RecipientController.store);
 // Rota para atualizar o destinatário
-routes.put('/recipients/:id', RecipientController.update);
+routes.put('/recipients/:id', adminMidlleware, RecipientController.update);
+//Rota para apagar um destinatário
+routes.delete(
+  '/recipients/:id',
+  adminMidlleware,
+  RecipientController.delete
+);
 // rota para listar todos os destinatários
 routes.get('/recipients', RecipientController.index);
 // Rota para fazer o upload od avatar do entregador

@@ -2,8 +2,6 @@ import React from 'react';
 import { Container, ProductName, Address, DateTitle } from './styles';
 import Modal from 'react-modal'
 export default function DeliveryModal({closeModal, modalIsOpen, deliveryData}) {
-var subtitle;
-console.tron.log(deliveryData);
   return (
     <div>
       <Modal
@@ -25,6 +23,7 @@ console.tron.log(deliveryData);
               border: '1px solid #ccc',
               background: '#fff',
               margin: 'auto',
+              overflow:'hidden',
           },
       }}
         contentLabel="Example Modal"
@@ -57,6 +56,7 @@ console.tron.log(deliveryData);
         </Container>
         <Container>
           <strong>Assinatura do destinatário</strong>
+          <img src={deliveryData.signature_url} alt=""/>
         </Container>
       </Modal>
     </div>

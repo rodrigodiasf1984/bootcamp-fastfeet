@@ -18,6 +18,9 @@ import {
 import Button from '~/components/Button';
 import DefaultInput from '~/components/DefaultInput';
 import api from '~/services/api';
+import history from '~/services/history';
+import {clearDelivery} from '~/store/modules/delivery/actions';
+import {useDispatch} from 'react-redux';
 
 export default function RegisterDelivery() {
   const [productInput, setProductInput] = useState('');
@@ -28,7 +31,7 @@ export default function RegisterDelivery() {
   const [selectedRecipient, setSelectedRecipient] = useState({});
   const [selectDeliveryman, setSelectedDeliveryman] = useState({});
 
-  const delivery= useSelector(state=>state.edit.editState);
+  const delivery= useSelector(state=>state.delivery.data);
 
   useEffect(() => {
     async function loadData() {
@@ -78,8 +81,8 @@ export default function RegisterDelivery() {
     });
 
     const filterDeliveryman = response.data.map((deliveryman) => ({
-      value: deliveryman.id,
       label: deliveryman.name,
+      value: deliveryman.id,
     }));
 
     callback(filterDeliveryman);
@@ -93,8 +96,8 @@ export default function RegisterDelivery() {
     });
 
     const filterRecipient = response.data.map((recipient) => ({
-      value: recipient.id,
       label: recipient.name,
+      value: recipient.id,
     }));
 
     callback(filterRecipient);
@@ -104,30 +107,34 @@ export default function RegisterDelivery() {
     setProductInput(e.target.value);
   }
 
-  function handleSelectedDeliveryman(){
-    const deliveryman=document.getElementById("react-select-2-input").value;
-    setCurrentDeliverymans(deliveryman.id);
-  }
+  function handleChangeRecipient(selectedOption){
+    setCurrentRecipients(selectedOption.id);
+  };
 
-  const schema = Yup.object().shape({
-    productInput: Yup.string().required('O produto é obrigatório'),
-    recipient_id: Yup.array().required('O destinatário é obrigatório'),
-    deliveryman_id: Yup.array().required('O entregador é obrigatório'),
-  });
+  function handleChangeDeliveryman(selectedOption){
+    setCurrentDeliverymans(selectedOption.id);
+  };
+
+  // const schema = Yup.object().shape({
+  //   productInput: Yup.string().required('O produto é obrigatório'),
+  //   recipient_id: Yup.object().required('O destinatário é obrigatório'),
+  //   deliveryman_id: Yup.object().required('O entregador é obrigatório'),
+  // });
 
   async function saveNewDelivery() {
-    schema.validate({
-      product:productInput,
-      recipient_id:selectedRecipient.id,
-      deliveryman_id:selectDeliveryman.id,
-    }, {abortEarly: false}).then(valid => {
-      console.tron.log('valid:', valid)
-    }).catch(err => {
-      console.tron.log('err:', err.errors)
-      err.errors.forEach(error => {
-        toast.error(error);
-      });
-    })
+
+    // schema.validate({
+    //   product:productInput,
+    //   recipient_id:selectedRecipient.id,
+    //   deliveryman_id:selectDeliveryman.id,
+    // }, {abortEarly: false}).then(valid => {
+    //   console.tron.log('valid:', valid)
+    // }).catch(err => {
+    //   console.tron.log('err:', err.errors)
+    //   err.errors.forEach(error => {
+    //     toast.error(error);
+    //   });
+    // })
 
       if(delivery){
         await api.put(`/deliveries/${delivery.id}`,{
@@ -144,19 +151,25 @@ export default function RegisterDelivery() {
         });
       }
 
-      // await api
-      //   .post('deliveries', {
-      //     product: productInput,
-      //     recipient_id: selectedRecipient.id,
-      //     deliveryman_id: selectDeliveryman.id,
-      //   })
-      //   .then(() => {
-      //     toast.success('Encomenda cadastrada com sucesso!');
-      //   })
-      //   .catch((err) => {
-      //     console.tron.log(err.response);
-      //     toast.error(err.response);
-      //   });
+      await api
+        .post('deliveries', {
+          product: productInput,
+          recipient_id: selectedRecipient.id,
+          deliveryman_id: selectDeliveryman.id,
+        })
+        .then(() => {
+          toast.success('Encomenda cadastrada com sucesso!');
+        })
+        .catch((err) => {
+          console.tron.log(err.response);
+          toast.error(err.response);
+        });
+  }
+
+  const dispatch = useDispatch();
+  function handleBack(){
+    dispatch(clearDelivery());
+    history.push('/deliveries');
   }
 
   return (
@@ -166,14 +179,14 @@ export default function RegisterDelivery() {
           {delivery === null ? <h1>Cadastro de encomendas</h1> : <h1>Edição da encomenda</h1>}
         </header>
       </Title>
-      <Form schema={schema}>
+      <Form>
       <Container>
-          <Link to="/Deliveries">
-            <Button background="#CCCCCC">
+          {/* <Link to="/Deliveries"> */}
+            <Button background="#CCCCCC" onClick={handleBack}>
               <MdKeyboardArrowLeft color="#fff" size={25} />
               <strong>VOLTAR</strong>
             </Button>
-          </Link>
+          {/* </Link> */}
           <Button background="#7159c1" onClick={saveNewDelivery}>
             <MdDone color="#fff" size={25} />
             <strong>SALVAR</strong>
@@ -183,9 +196,8 @@ export default function RegisterDelivery() {
           <ContentItem>
             <strong>Destinatário</strong>
             <AsyncSelect
-              value={currentRecipients}
               defaultOptions={recipients}
-              onChange={handleSelectedDeliveryman}
+              onChange={{handleChangeRecipient}}
               placeholder="Selecione o destinatário"
               isSearchable
               loadOptions={searchRecipient}
@@ -195,10 +207,9 @@ export default function RegisterDelivery() {
           <ContentItem>
             <strong>Entregador</strong>
             <AsyncSelect
-              value={currentDeliveryman}
               defaultOptions={deliverymans}
               placeholder="Selecione o Entregador"
-              onChange={setSelectedDeliveryman}
+              onChange={{handleChangeDeliveryman}}
               isSearchable
               loadOptions={searchDeliverymans}
               noOptionsMessage={() => 'Entregador não encontrado!'}

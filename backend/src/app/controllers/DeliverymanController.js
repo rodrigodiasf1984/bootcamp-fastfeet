@@ -51,6 +51,7 @@ class DeliverymanController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
+      avatar_id:Yup.number(),
       name: Yup.string().required(),
       email: Yup.string()
         .email()
@@ -67,12 +68,13 @@ class DeliverymanController {
     if (deliverymanExist) {
       return res.status(400).json({ error: 'User already exist!' });
     }
-    const { id, name, email } = await Deliveryman.create(req.body);
+    const { id, name, email, avatar_id } = await Deliveryman.create(req.body);
 
     return res.json({
       id,
       name,
       email,
+      avatar_id
     });
   }
 

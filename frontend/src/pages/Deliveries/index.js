@@ -17,6 +17,7 @@ import SearchInput from '~/components/SearchInput';
 import DropdownMenu from '~/components/DropdownMenu';
 import api from '~/services/api';
 import Modal from '~/components/DeliveryModal';
+import { toast } from 'react-toastify';
 
 export default function Deliveries() {
   const [deliveries, setDeliveries] = useState([]);
@@ -61,8 +62,20 @@ export default function Deliveries() {
     setModalIsOpen(false);
   }
 
-  function handleRequestOpen(delivery){
+  async function handleDeleteDelivery(deleteDelivery){
+    console.tron.log(deleteDelivery, 'apagar');
+    await api.delete(`/deliveries/${deleteDelivery.id}`)
+    .then(()=>{
+      toast.success('Encomenda apagada com sucesso!');
+      searchDeliveries();
+    })
+    .catch((err)=>{
+      console.tron.log(err.response);
+      toast.error(err.response);
+    });
+  }
 
+  function handleRequestOpen(delivery){
     const{product, recipient, start_date, end_date, signature}=delivery;
     const deliveryData={
       product,
@@ -74,8 +87,7 @@ export default function Deliveries() {
       postal_code:recipient.postal_code,
       start_date,
       end_date,
-      //signature_url:signature === null ? null : signature.url,
-
+      signature_url:signature === null ? '' : signature.url,
     }
     setModalIsOpen(true);
     setModalData(deliveryData);
@@ -152,7 +164,7 @@ export default function Deliveries() {
               </DeliveryStatus>
             </ListMain>
             <ListActions>
-              <DropdownMenu deliveries delivery={delivery} openModalFunction={handleRequestOpen}/>
+              <DropdownMenu inPackages delivery={delivery} editData={delivery} openModalFunction={handleRequestOpen} handleDelete={handleDeleteDelivery}/>
             </ListActions>
           </>
         ))}

@@ -75,7 +75,7 @@ export default function DeliveryProblems() {
             </ListMain>
 
             <ListActions>
-              <DropdownMenu inPackages />
+              <DropdownMenu inProblems />
             </ListActions>
           </>
         ))}

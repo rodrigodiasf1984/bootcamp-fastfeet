@@ -16,8 +16,9 @@ import SearchInput from '~/components/SearchInput';
 import DropdownMenu from '~/components/DropdownMenu';
 
 import api from '~/services/api';
+import blankAvatar from '~/assets/blank-profile-picture.webp';
 
-export default function Deliveries() {
+export default function Deliverymans() {
   const [deliverymans, setDeliverymans] = useState([]);
   const [page, setPage] = useState(1);
 
@@ -79,8 +80,8 @@ export default function Deliveries() {
               <AvatarIcon
                 size={40}
                 round
-                id={deliveryman.avatar.id}
-                 src={deliveryman.avatar.url}
+                id={deliveryman.avatar !== null ? deliveryman.avatar.id : null}
+                 src={deliveryman.avatar !== null ? deliveryman.avatar.url : blankAvatar}
               />
 
               {/* <AvatarIcon size={36} round name={deliveryman.name} /> */}
@@ -92,11 +93,32 @@ export default function Deliveries() {
               <span>{deliveryman.email}</span>
             </ListMain>
             <ListActions>
-              <DropdownMenu inPackages={deliverymans} />
+              <DropdownMenu inDeliverymans editData={deliveryman} deliveryman={deliveryman} />
             </ListActions>
           </>
         ))}
       </List>
+      <Pagination>
+          <Button
+            disabled={(page <= 1 || searching) && true}
+            value="prev"
+            type="button"
+            onClick={e => this.handlePagination(e, page - 1)}
+          >
+            <GoChevronLeft color="#FFF" size={20} />
+            <p>Anterior</p>
+          </Button>
+          <span>{searching ? <FaSpinner /> : `Página ${page}`}</span>
+          <Button
+            value="next"
+            type="button"
+            disabled={(issues.length < perPage || searching) && true}
+            onClick={e => this.handlePagination(e, page + 1)}
+          >
+            <p>Próxima</p>
+            <GoChevronRight color="#FFF" size={20} />
+          </Button>
+        </Pagination>
     </>
   );
 }

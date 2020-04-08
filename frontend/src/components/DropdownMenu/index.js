@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { MdEdit, MdDeleteForever } from 'react-icons/md';
 import { IoMdEye } from 'react-icons/io';
 import history from '~/services/history';
-import {setEdit} from '~/store/modules/edit/actions';
+import {editDelivery} from '~/store/modules/delivery/actions';
+import {editRecipient} from '~/store/modules/recipient/actions';
+import {editDeliveryman} from '~/store/modules/deliveryman/actions';
 import {useDispatch} from 'react-redux';
-
 import {
   Container,
   ActionButton,
@@ -14,20 +15,46 @@ import {
   Option,
 } from './styles';
 
-export default function DropdownMenu({ deliveries, openModalFunction, delivery }) {
+export default function DropdownMenu({ openModalFunction, editData, delivery,deliveryman, recipient, handleDelete, inPackages, inRecipients, inDeliverymans, inProblems}) {
   const [visible, setVisible] = useState(false);
   const dispatch= useDispatch();
-  function handleToggleVisible() {
 
+  function handleToggleVisible() {
     setVisible(!visible);
   }
 
   function handleEdit(){
-   dispatch(setEdit(delivery));
-    history.push('/RegisterDelivery');
+    if(inPackages){
+      dispatch(editDelivery(editData));
+      history.push('/RegisterDelivery');
+    }else if(inRecipients){
+      dispatch(editRecipient(editData));
+      history.push('/RegisterRecipients');
+    }
+    else if(inDeliverymans){
+      dispatch(editDeliveryman(editData));
+      history.push('/RegisterDeliverymans');
+    }
+    else if(inProblems){
+      //dispatch(setEdit(problem));
+      history.push('/RegisterProblems');
+    }
   }
 
-
+  async function handleDel(){
+    const confirmation=window.confirm('Tem certeza que deseja apagar?');
+    if(confirmation){
+      if(delivery){
+        handleDelete(delivery);
+      }
+      else if(recipient){
+       handleDelete(recipient);
+      }
+      else if(deliveryman){
+        handleDelete(deliveryman)
+      }
+    }
+  }
   return (
     <Container>
       <ActionButton onClick={handleToggleVisible}>
@@ -39,12 +66,14 @@ export default function DropdownMenu({ deliveries, openModalFunction, delivery }
           <button type="button" >Editar</button>
         </Option>
 
-        <Option>
-          <MdDeleteForever color="#DE3B3B" />
-          <button type="button">Excluir</button>
-        </Option>
+        {/* {delivery.status === "Pendente" ? ( */}
+          <Option onClick={handleDel}>
+            <MdDeleteForever color="#DE3B3B" />
+            <button type="button">Excluir</button>
+          </Option>
+        {/* ) : null } */}
 
-        {deliveries && (
+        {inPackages && (
           <Option>
             <IoMdEye color="#8E5BE8 " />
             <button onClick={() => openModalFunction(delivery)} type="button">
