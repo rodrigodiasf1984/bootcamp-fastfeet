@@ -56,17 +56,6 @@ export default function RegisterDeliverymans() {
   });
 
   async function saveNewDeliveryman({avatar_id, name, email}) {
-     schema.validate({
-      avatar_id,
-      name,
-      email,
-    }, {abortEarly: false}).then(valid => {
-      console.tron.log('valid:', valid)
-    }).catch(err => {
-      console.tron.log('err:', err.errors)
-    })
-    console.tron.log();
-
     if(deliveryman){
       await api.put(`/deliverymans/${deliveryman.id}`,{
         avatar_id,
@@ -79,7 +68,7 @@ export default function RegisterDeliverymans() {
       })
       .catch((err)=>{
         console.tron.log(err.response);
-        toast.error(err.response);
+        toast.error(err.response.data.error);
       });
     }
     else{
@@ -98,11 +87,8 @@ export default function RegisterDeliverymans() {
         toast.error(err.response.data.error);
       });
     }
-
     // const avatar_id=document.getElementById("avatar").dataset.file;
     //console.tron.log(nameInput, emailInput, avatar_id);
-
-
   }
 
   const dispatch=useDispatch();

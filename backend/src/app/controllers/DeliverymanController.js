@@ -17,8 +17,8 @@ class DeliverymanController {
           },
         },
         attributes: ['id', 'name', 'email'],
-        limit: 20, // lista somente 20 resultados
-        offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+        limit: 10, // lista somente 10 resultados
+        offset: (page - 1) * 10, // serve para determina quantos registos eu quero pular
         include: [
           {
             model: File,
@@ -36,8 +36,8 @@ class DeliverymanController {
     // retorna a lista de agendamento do utlizador que fez a requisição
     const listDeliverymans = await Deliveryman.findAll({
       attributes: ['id', 'name', 'email'],
-      limit: 20, // lista somente 20 resultados
-      offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+      limit: 10, // lista somente 10 resultados
+      offset: (page - 1) * 10, // serve para determina quantos registos eu quero pular
       include: [
         {
           model: File,

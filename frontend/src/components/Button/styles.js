@@ -10,7 +10,7 @@ export const Button = styled.button.attrs((props) => ({
   align-items: center;
   justify-content: center;
   height: 36px;
-  width: 112px;
+  width: 125px;
   padding: 0 16px;
   background: ${(props) => props.background};
   border: 1px solid #ddd;
@@ -33,4 +33,9 @@ export const Button = styled.button.attrs((props) => ({
   }
 
   cursor: pointer;
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
 `;

@@ -1,6 +1,51 @@
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import Avatar from 'react-avatar';
-import { darken } from 'polished';
+/* Animação para gira o spinner  */
+export const rotate = keyframes`
+  from{
+    transform:rotate(0deg);
+  }
+  to{
+    transform:rotate(360deg);
+  }
+`;
+export const Loading = styled.div`
+  color: #fff;
+  font-size: 30px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  ${css`
+    svg {
+      margin-left: 10px;
+      animation: ${rotate} 2.5s linear infinite;
+    }
+  `}
+`;
+
+export const Pagination = styled.div`
+  margin: 0px;
+  display: flex;
+  flex-direction: row;
+  margin-top:25px;
+  margin-bottom:5px;
+  height:auto;
+  justify-content: space-between;
+  align-items:center;
+  align-content:center;
+  min-width: 400px;
+
+  button{
+    margin-right:10px;
+  }
+
+  span{
+    font-size: 20px;
+  }
+
+`;
 
 export const List = styled.div`
   margin: 10px;
@@ -9,6 +54,7 @@ export const List = styled.div`
   grid-row-gap: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   min-width: 400px;
+  height:auto;
 `;
 
 export const ListHeader = styled.div`
@@ -70,32 +116,6 @@ export const Container = styled.div`
   justify-content: space-between;
 `;
 
-export const SubmitButton = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  height: 36px;
-  width: 160px;
-  padding: 0 16px;
-  background: #7159c1;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-
-  svg {
-    margin-right: 8px;
-  }
-
-  strong {
-    color: #fff;
-    display: flex;
-  }
-
-  &:hover {
-    background: ${darken(0.03, '#7159c1')};
-  }
-`;
-
 export const AvatarIcon = styled(Avatar).attrs({
   // color: '#F4EFFC',
   maxInitials: 2,
@@ -114,3 +134,5 @@ export const AvatarIcon = styled(Avatar).attrs({
 export const Title = styled.div`
   margin: 10px;
 `;
+
+

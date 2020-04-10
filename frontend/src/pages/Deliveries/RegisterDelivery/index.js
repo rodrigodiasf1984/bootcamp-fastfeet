@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {useSelector} from 'react-redux';
 import { MdDone, MdKeyboardArrowLeft } from 'react-icons/md';
-import AsyncSelect from 'react-select/async';
+import AsyncSelect from './AsynSelect';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
@@ -23,57 +23,33 @@ import {clearDelivery} from '~/store/modules/delivery/actions';
 import {useDispatch} from 'react-redux';
 
 export default function RegisterDelivery() {
-  const [productInput, setProductInput] = useState('');
-  const [recipients, setRecipients] = useState([]);
-  const [currentRecipients, setCurrentRecipients] = useState(null);
-  const [currentDeliveryman, setCurrentDeliverymans] = useState(null);
-  const [deliverymans, setDeliverymans] = useState([]);
-  const [selectedRecipient, setSelectedRecipient] = useState({});
-  const [selectDeliveryman, setSelectedDeliveryman] = useState({});
-
+  //const [productInput, setProductInput] = useState('');
   const delivery= useSelector(state=>state.delivery.data);
 
-  useEffect(() => {
-    async function loadData() {
-      if(delivery){
-        setProductInput(delivery.product);
-        console.tron.log(delivery)
-        const currentRecipients={
-          label:delivery.recipient.name,
-          value:delivery.recipient.id,
-        }
-        setCurrentRecipients(currentRecipients);
+  const [recipients, setRecipients] = useState([]);
+  const [deliverymans, setDeliverymans] = useState([]);
+  const[currentRecipient, setCurrentRecipient]=useState(delivery && delivery.recipient.name);
+  const[currentDeliveryman,setCurrentDeliveryman]=useState(delivery && delivery.deliveryman.name);
+  const[product, setProduct]=useState(delivery  && delivery.product);
 
-        const currentDeliveryman ={
-          label: delivery.deliveryman.name,
-          value: delivery.deliveryman.id,
-        }
-        setCurrentDeliverymans(currentDeliveryman);
-      }
-      const responseRecipients = await api.get('recipients');
-      const responseDeliveryMans = await api.get('deliverymans');
+  useEffect(()=>{
 
-      setRecipients(
-        responseRecipients.data.map((recipient) => ({
-          label: recipient.name,
-          value: recipient.id,
-        }))
-      );
+    async function loadRecipients(inputValue) {
+      const response = await api.get('recipients', {
+        params: {
+          q: inputValue,
+        },
+      });
 
-      setDeliverymans(
-        responseDeliveryMans.data.map((deliveryman) => ({
-          label: deliveryman.name,
-          value: deliveryman.id,
-        }))
-      );
+      const filterRecipient = response.data.map((recipient) => ({
+        label: recipient.name,
+        value: recipient.id,
+      }));
+
+      setRecipients(filterRecipient);
     }
-      loadData();
-    }, []);
 
-    // console.log(currentRecipients, 'Recipients');
-    // console.log(currentDeliveryman, 'Deliverymans')
-
-  async function searchDeliverymans(inputValue, callback) {
+  async function loadDeliverymans(inputValue) {
     const response = await api.get('deliverymans', {
       params: {
         q: inputValue,
@@ -85,85 +61,83 @@ export default function RegisterDelivery() {
       value: deliveryman.id,
     }));
 
-    callback(filterDeliveryman);
+    setDeliverymans(filterDeliveryman);
+  }
+  loadRecipients();
+  loadDeliverymans();
+}, []);
+
+  const handleRecipientChange = (value) => {
+    setCurrentRecipient(value);
   }
 
-  async function searchRecipient(inputValue, callback) {
-    const response = await api.get('recipients', {
-      params: {
-        q: inputValue,
-      },
+  const handleDeliveryman = (value)=>{
+    setCurrentDeliveryman(value);
+  }
+
+  const filterData = (inputValue, array) => {
+    return array.filter((i) =>
+      i.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
+
+  const recipientOptions = (inputValue) =>
+    new Promise((resolve) => {
+      resolve(filterData(inputValue, recipients));
     });
 
-    const filterRecipient = response.data.map((recipient) => ({
-      label: recipient.name,
-      value: recipient.id,
-    }));
+  const deliverymanOptions = (inputValue) =>
+    new Promise((resolve) => {
+      resolve(filterData(inputValue, deliverymans));
+    });
 
-    callback(filterRecipient);
-  }
+    const schema = Yup.object().shape({
+      recipient: Yup.object({
+        value: Yup.number(),
+        label: Yup.string(),
+      }).required('O destinatário é obrigatório'),
+      deliveryman: Yup.object({
+        value: Yup.number(),
+        label: Yup.string(),
+      }).required('O entregador é obrigatório'),
+      product: Yup.string().required('O produto é obrigatório'),
+    });
 
-  function handleInputproduct(e) {
-    setProductInput(e.target.value);
-  }
-
-  function handleChangeRecipient(selectedOption){
-    setCurrentRecipients(selectedOption.id);
-  };
-
-  function handleChangeDeliveryman(selectedOption){
-    setCurrentDeliverymans(selectedOption.id);
-  };
-
-  // const schema = Yup.object().shape({
-  //   productInput: Yup.string().required('O produto é obrigatório'),
-  //   recipient_id: Yup.object().required('O destinatário é obrigatório'),
-  //   deliveryman_id: Yup.object().required('O entregador é obrigatório'),
-  // });
-
-  async function saveNewDelivery() {
-
-    // schema.validate({
-    //   product:productInput,
-    //   recipient_id:selectedRecipient.id,
-    //   deliveryman_id:selectDeliveryman.id,
-    // }, {abortEarly: false}).then(valid => {
-    //   console.tron.log('valid:', valid)
-    // }).catch(err => {
-    //   console.tron.log('err:', err.errors)
-    //   err.errors.forEach(error => {
-    //     toast.error(error);
-    //   });
-    // })
+  async function saveNewDelivery(data) {
 
       if(delivery){
         await api.put(`/deliveries/${delivery.id}`,{
-          product:productInput,
-          recipient_id:selectedRecipient.id,
-          deliveryman_id:selectDeliveryman.id,
+          product:data.product,
+          recipient_id:data.recipient.value,
+          deliveryman_id:data.deliveryman.value,
         })
         .then(()=>{
           toast.success('Encomenda atualizada com sucesso!');
+          handleBack();
         })
         .catch((err)=>{
-          console.tron.log(err.response);
-          toast.error(err.response);
+          //console.tron.log(response);
+          err.errors.forEach(error => {
+            toast.error(err.response.data.error);
+          });
+          //toast.error('TESTE');
         });
-      }
-
-      await api
+      }else{
+        await api
         .post('deliveries', {
-          product: productInput,
-          recipient_id: selectedRecipient.id,
-          deliveryman_id: selectDeliveryman.id,
+          product:data.product,
+          recipient_id:data.recipient.value,
+          deliveryman_id:data.deliveryman.value,
         })
         .then(() => {
           toast.success('Encomenda cadastrada com sucesso!');
+          handleBack();
         })
         .catch((err) => {
-          console.tron.log(err.response);
-          toast.error(err.response);
+          console.tron.log(err.response.data.error);
+          toast.error(err.response.data.error);
         });
+      }
   }
 
   const dispatch = useDispatch();
@@ -179,7 +153,7 @@ export default function RegisterDelivery() {
           {delivery === null ? <h1>Cadastro de encomendas</h1> : <h1>Edição da encomenda</h1>}
         </header>
       </Title>
-      <Form>
+      <Form initialData={delivery} schema={schema} onSubmit={saveNewDelivery}>
       <Container>
           {/* <Link to="/Deliveries"> */}
             <Button background="#CCCCCC" onClick={handleBack}>
@@ -187,7 +161,7 @@ export default function RegisterDelivery() {
               <strong>VOLTAR</strong>
             </Button>
           {/* </Link> */}
-          <Button background="#7159c1" onClick={saveNewDelivery}>
+          <Button background="#7159c1">
             <MdDone color="#fff" size={25} />
             <strong>SALVAR</strong>
           </Button>
@@ -196,34 +170,36 @@ export default function RegisterDelivery() {
           <ContentItem>
             <strong>Destinatário</strong>
             <AsyncSelect
+              name="recipient"
+              cacheOptions
+              inputValue={currentRecipient}
+              onInputChange={handleRecipientChange}
               defaultOptions={recipients}
-              onChange={{handleChangeRecipient}}
+              loadOptions={recipientOptions}
               placeholder="Selecione o destinatário"
               isSearchable
-              loadOptions={searchRecipient}
               noOptionsMessage={() => 'Destinatário não encontrado'}
               />
           </ContentItem>
           <ContentItem>
             <strong>Entregador</strong>
             <AsyncSelect
+              name="deliveryman"
+              inputValue={currentDeliveryman}
+              onInputChange={handleDeliveryman}
+              cacheOptions
               defaultOptions={deliverymans}
               placeholder="Selecione o Entregador"
-              onChange={{handleChangeDeliveryman}}
               isSearchable
-              loadOptions={searchDeliverymans}
+              loadOptions={deliverymanOptions}
               noOptionsMessage={() => 'Entregador não encontrado!'}
-              onChage={setDeliverymans}
               />
           </ContentItem>
           <ContentProduct>
             <strong>Nome do produto</strong>
             <DefaultInput
-            value={productInput}
-              name="productInput"
+              name="product"
               type="text"
-              value={productInput}
-              onChange={handleInputproduct}
               placeholder="Digite o nome da encomenda"
               />
           </ContentProduct>

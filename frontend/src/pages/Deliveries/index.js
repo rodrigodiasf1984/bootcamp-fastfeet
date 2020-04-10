@@ -3,7 +3,6 @@ import { MdAdd } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import {
   Container,
-  SubmitButton,
   DeliveryManName,
   List,
   ListHeader,
@@ -12,24 +11,32 @@ import {
   AvatarIcon,
   DeliveryStatus,
   Title,
+  Pagination,
 } from './styles';
 import SearchInput from '~/components/SearchInput';
 import DropdownMenu from '~/components/DropdownMenu';
 import api from '~/services/api';
 import Modal from '~/components/DeliveryModal';
 import { toast } from 'react-toastify';
+import { FaSpinner } from 'react-icons/fa';
+import {GoChevronLeft,GoChevronRight} from 'react-icons/go';
+import Button from '~/components/Button';
 
 export default function Deliveries() {
   const [deliveries, setDeliveries] = useState([]);
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage]=useState(10);
+  const [loading, setLoading]=useState(false);
   const[ modalIsOpen, setModalIsOpen]=useState(false);
   const[modalData, setModalData]=useState({});
+  const [searchInput, setSearchInput]=useState('');
 
   async function searchDeliveries() {
+    setLoading(true);
     const response = await api.get('deliveries', {
       params: {
         page,
-        q: '',
+        q: searchInput,
       },
     });
 
@@ -53,7 +60,10 @@ export default function Deliveries() {
     });
 
     setDeliveries(response.data);
+    setLoading(false);
+    setSearchInput('');
   }
+
   useEffect(() => {
     searchDeliveries();
   }, [page]);
@@ -71,12 +81,12 @@ export default function Deliveries() {
     })
     .catch((err)=>{
       console.tron.log(err.response);
-      toast.error(err.response);
+      toast.error(err.response.data.error);
     });
   }
 
   function handleRequestOpen(delivery){
-    const{product, recipient, start_date, end_date, signature}=delivery;
+    const{product, recipient, start_date, end_date, signature, canceled_at}=delivery;
     const deliveryData={
       product,
       street:recipient.street,
@@ -88,10 +98,31 @@ export default function Deliveries() {
       start_date,
       end_date,
       signature_url:signature === null ? '' : signature.url,
+      canceled_at,
     }
-    setModalIsOpen(true);
     setModalData(deliveryData);
+    setModalIsOpen(true);
   }
+
+  function handlePressEnter(e){
+    e.preventDefault();
+    if(e.keyCode===13 || e.wich===13){
+      searchDeliveries();
+    }
+  }
+
+  function handlePrevPage(){
+    setPage(page - 1);
+  };
+
+  function handleNextPage(){
+    setPage(page + 1);
+  }
+
+  function handleSearchInput(e){
+    setSearchInput(e.target.value);
+  }
+
 
   return (
     <>
@@ -106,12 +137,18 @@ export default function Deliveries() {
         </header>
       </Title>
       <Container>
-        <SearchInput placeholder="Buscar encomendas" />
+        <SearchInput
+          placeholder="Buscar encomendas"
+          loading={loading}
+          value={searchInput}
+          onChange={handleSearchInput}
+          onKeyUp={handlePressEnter}
+        />
         <Link to="/RegisterDelivery">
-          <SubmitButton>
+          <Button background="#7159c1">
             <MdAdd color="#fff" size={25} />
             <strong>CADASTRAR</strong>
-          </SubmitButton>
+          </Button>
         </Link>
       </Container>
 
@@ -169,6 +206,27 @@ export default function Deliveries() {
           </>
         ))}
       </List>
+      <Pagination>
+          <Button
+            background="#7159c1"
+            disabled={page===1}
+            value="prev"
+            onClick={handlePrevPage}
+          >
+            <GoChevronLeft color="#FFF" size={20} />
+            <strong>ANTERIOR</strong>
+          </Button>
+          <span>{loading ? <FaSpinner /> : `Página ${page}`}</span>
+          <Button
+            background="#7159c1"
+            value="next"
+            disabled={(deliveries.length < perPage || loading) && true}
+            onClick={handleNextPage}
+          >
+            <strong>PRÓXIMA</strong>
+            <GoChevronRight color="#FFF" size={20} />
+          </Button>
+        </Pagination>
     </>
   );
 }

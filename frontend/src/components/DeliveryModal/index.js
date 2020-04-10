@@ -1,7 +1,23 @@
 import React from 'react';
 import { Container, ProductName, Address, DateTitle } from './styles';
-import Modal from 'react-modal'
+import Modal from 'react-modal';
+import { format } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
+
 export default function DeliveryModal({closeModal, modalIsOpen, deliveryData}) {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // console.tron.log(deliveryData);
+  const startDateFormatted = deliveryData.start_date
+    ? format(utcToZonedTime(deliveryData.start_date, timezone), 'dd/MM/yyyy HH:mm')
+    : null;
+
+  const endDateFormatted = deliveryData.end_date
+    ? format(utcToZonedTime(deliveryData.end_date, timezone), 'dd/MM/yyyy HH:mm')
+    : null;
+
+  const canceledDateFormatted = deliveryData.canceled_at
+    ? format(utcToZonedTime(deliveryData.canceled_at, timezone), 'dd/MM/yyyy HH:mm')
+    : null;
   return (
     <div>
       <Modal
@@ -47,12 +63,21 @@ export default function DeliveryModal({closeModal, modalIsOpen, deliveryData}) {
           </DateTitle>
           <div>
             <strong>Retirada: </strong>
-              {deliveryData.start_date}
+              {startDateFormatted}
           </div>
           <div>
             <strong>Entrega: </strong>
-              {deliveryData.end_date}
+              {endDateFormatted}
           </div>
+
+           {deliveryData.canceled_at &&(
+
+             <div>
+            <strong>Cancelada: </strong>
+              {canceledDateFormatted}
+          </div>
+             )
+          }
         </Container>
         <Container>
           <strong>Assinatura do destinatário</strong>

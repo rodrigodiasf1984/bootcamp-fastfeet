@@ -15,7 +15,8 @@ import {
   Option,
 } from './styles';
 
-export default function DropdownMenu({ openModalFunction, editData, delivery,deliveryman, recipient, handleDelete, inPackages, inRecipients, inDeliverymans, inProblems}) {
+export default function DropdownMenu({ openModalFunction,openModalProblemFunction, editData, delivery,deliveryman, recipient, handleDelete, inPackages, inRecipients, inDeliverymans, inProblems, deliveryProblem}) {
+  //console.tron.log(deliveryProblem,'Problem');
   const [visible, setVisible] = useState(false);
   const dispatch= useDispatch();
 
@@ -35,14 +36,19 @@ export default function DropdownMenu({ openModalFunction, editData, delivery,del
       dispatch(editDeliveryman(editData));
       history.push('/RegisterDeliverymans');
     }
-    else if(inProblems){
-      //dispatch(setEdit(problem));
-      history.push('/RegisterProblems');
-    }
+    // else if(inProblems){
+    //   //dispatch(setEdit(problem));
+    //   history.push('/RegisterProblems');
+    // }
   }
 
   async function handleDel(){
-    const confirmation=window.confirm('Tem certeza que deseja apagar?');
+    let confirmation='';
+    if(deliveryProblem){
+      confirmation=window.confirm('Tem certeza que deseja cancelar?');
+    }else{
+      confirmation=window.confirm('Tem certeza que deseja apagar?');
+    }
     if(confirmation){
       if(delivery){
         handleDelete(delivery);
@@ -51,8 +57,12 @@ export default function DropdownMenu({ openModalFunction, editData, delivery,del
        handleDelete(recipient);
       }
       else if(deliveryman){
-        handleDelete(deliveryman)
+        handleDelete(deliveryman);
       }
+      else if(deliveryProblem){
+        handleDelete(deliveryProblem);
+      }
+
     }
   }
   return (
@@ -60,20 +70,22 @@ export default function DropdownMenu({ openModalFunction, editData, delivery,del
       <ActionButton onClick={handleToggleVisible}>
         <ActionIcon />
       </ActionButton>
-      <OptionList visible={visible} onMouseLeave={handleToggleVisible}>
-        <Option onClick={handleEdit}>
-          <MdEdit color="#4D85EE" />
-          <button type="button" >Editar</button>
-        </Option>
+      <OptionList visible={visible} onMouseLeave={handleToggleVisible} inProblems={inProblems}>
+        {!inProblems &&(
+          <Option onClick={handleEdit}>
+            <MdEdit color="#4D85EE" />
+            <button type="button" >Editar</button>
+          </Option>
+        )}
 
         {/* {delivery.status === "Pendente" ? ( */}
           <Option onClick={handleDel}>
             <MdDeleteForever color="#DE3B3B" />
-            <button type="button">Excluir</button>
+        <button type="button">{inProblems && !deliveryProblem.status === 'Cancelada' ? 'Cancelar encomenda': 'Excluir'}</button>
           </Option>
         {/* ) : null } */}
 
-        {inPackages && (
+        {inPackages &&(
           <Option>
             <IoMdEye color="#8E5BE8 " />
             <button onClick={() => openModalFunction(delivery)} type="button">
@@ -81,6 +93,17 @@ export default function DropdownMenu({ openModalFunction, editData, delivery,del
             </button>
           </Option>
         )}
+
+        {
+          inProblems &&(
+            <Option>
+            <IoMdEye color="#8E5BE8 " />
+            <button onClick={openModalProblemFunction} type="button">
+              Visualizar
+            </button>
+          </Option>
+          )
+        }
       </OptionList>
     </Container>
   );

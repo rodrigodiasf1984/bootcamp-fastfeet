@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Avatar from 'react-avatar';
 import { darken } from 'polished';
 
 export const List = styled.div`
@@ -31,7 +32,7 @@ export const ListHeader = styled.div`
   font-weight: bold;
 `;
 
-export const DeliveryProblemDescription = styled.span`
+export const DeliveryManName = styled.span`
   margin-left: 10px;
 `;
 
@@ -69,32 +70,43 @@ export const Container = styled.div`
   justify-content: space-between;
 `;
 
-export const SubmitButton = styled.div`
+export const AvatarIcon = styled(Avatar).attrs({
+  // color: '#F4EFFC',
+  maxInitials: 2,
+  // fgColor: 'black',
+})`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  height: 36px;
-  width: 160px;
-  padding: 0 16px;
-  background: #7159c1;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-
-  svg {
-    margin-right: 8px;
-  }
-
-  strong {
-    color: #fff;
+  justify-content: center;
+  span {
+    text-transform: uppercase;
+    font-weight: bold;
     display: flex;
-  }
-
-  &:hover {
-    background: ${darken(0.03, '#7159c1')};
+    justify-content: center;
   }
 `;
 
 export const Title = styled.div`
   margin: 10px;
+`;
+
+export const Pagination = styled.div`
+  margin: 0px;
+  display: flex;
+  flex-direction: row;
+  margin-top:25px;
+  margin-bottom:5px;
+  height:auto;
+  justify-content: space-between;
+  align-items:center;
+  align-content:center;
+  min-width: 400px;
+
+  button{
+    margin-right:10px;
+  }
+
+  span{
+    font-size: 20px;
+  }
+
 `;

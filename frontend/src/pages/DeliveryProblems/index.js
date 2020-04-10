@@ -1,59 +1,114 @@
 import React, { useState, useEffect } from 'react';
-import { MdAdd } from 'react-icons/md';
-import { Link } from 'react-router-dom';
 import {
-  Container,
-  SubmitButton,
-  DeliveryProblemDescription,
   List,
   ListHeader,
   ListMain,
   ListActions,
   Title,
+  Pagination
 } from './styles';
-import SearchInput from '~/components/SearchInput';
-import DropdownMenu from '~/components/DropdownMenu';
 
+import DropdownMenu from '~/components/DropdownMenu';
 import api from '~/services/api';
+import Modal from '~/components/DeliveryProblemModal';
+import { toast } from 'react-toastify';
+import Button from '~/components/Button';
+import { FaSpinner } from 'react-icons/fa';
+import {GoChevronLeft,GoChevronRight} from 'react-icons/go';
+import SearchInput from '~/components/SearchInput';
 
 export default function DeliveryProblems() {
   const [deliveryProblems, setDeliveryProblems] = useState([]);
+  const [modalIsOpen, setModalIsOpen]=useState(false);
+  const [modalData, setModalData]=useState({});
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage]=useState(10);
+  const [loading, setLoading]=useState(false);
+  const [searchInput, setSearchInput]=useState('');
 
-  async function searchDeliveryProblem() {
+  async function searchDeliveryProblems() {
+    setLoading(true);
     const response = await api.get('delivery/problems', {
       params: {
         page,
-        q: '',
+        q: searchInput,
       },
     });
 
     setDeliveryProblems(response.data);
+    setLoading(false);
+    setSearchInput('');
   }
   useEffect(() => {
-    searchDeliveryProblem();
+    searchDeliveryProblems();
   }, [page]);
+
+  function handleRequestClose(){
+    setModalIsOpen(false);
+  }
+
+  async function handleCancelDelivery(cancelDelivery){
+    console.tron.log(cancelDelivery, 'apagar');
+    await api.delete(`/problem/${cancelDelivery.delivery.id}/cancel-delivery`)
+    .then(()=>{
+      toast.success('Encomenda cancelada com sucesso!');
+      searchDeliveryProblems();
+    })
+    .catch((err)=>{
+      console.tron.log(err.response);
+      toast.error(err.response.data.error);
+    });
+  }
+
+  function handleRequestOpen(deliveryProblem){
+    console.tron.log(deliveryProblem.description, 'tttttttttt');
+    const {description}=deliveryProblem;
+
+    const deliveryProblemData={
+      description,
+    }
+    setModalData(deliveryProblem.description);
+    setModalIsOpen(true);
+    console.tron.log(modalData, 'modalData');
+    console.tron.log(setModalData(deliveryProblemData), 'setmodalData');
+  }
+
+  function handlePrevPage(){
+    setPage(page - 1);
+  };
+
+  function handleNextPage(){
+    setPage(page + 1);
+  }
+
+  function handleSearchInput(e){
+    setSearchInput(e.target.value);
+  }
+
+  function handlePressEnter(e){
+    e.preventDefault();
+    if(e.keyCode===13 || e.wich===13){
+      setDeliveryProblems();
+    }
+  }
 
   return (
     <>
       <Title>
         <header>
-          <h1>Problemas na entrega</h1>
+          <h1>Gerenciamento de encomendas</h1>
         </header>
       </Title>
-      <Container>
-        <SearchInput placeholder="Buscar problemas" />
-        <Link to="/RegisterDeliveryProblem">
-          <SubmitButton>
-            <MdAdd color="#fff" size={25} />
-            <strong>CADASTRAR</strong>
-          </SubmitButton>
-        </Link>
-      </Container>
-
+     <SearchInput
+          placeholder="Buscar encomendas"
+          loading={loading}
+          value={searchInput}
+          onChange={handleSearchInput}
+          onKeyUp={handlePressEnter}
+        />
       <List>
         <ListHeader>
-          <span>ID</span>
+          <span>Encomenda</span>
         </ListHeader>
         <ListHeader>
           <span>Problema</span>
@@ -67,19 +122,41 @@ export default function DeliveryProblems() {
             <ListMain key={deliveryProblem.id}>
               <span>#{deliveryProblem.id}</span>
             </ListMain>
-
             <ListMain>
-              <DeliveryProblemDescription>
-                {deliveryProblem.description}
-              </DeliveryProblemDescription>
+              <span>{deliveryProblem.description}</span>
             </ListMain>
-
             <ListActions>
-              <DropdownMenu inProblems />
+              <DropdownMenu inProblems deliveryProblem={deliveryProblem} openModalProblemFunction={handleRequestOpen} handleDelete={handleCancelDelivery}/>
             </ListActions>
-          </>
+           <Modal
+           closeModal={handleRequestClose}
+           modalIsOpen={modalIsOpen}
+           deliveryData={deliveryProblem}
+           />
+           </>
         ))}
       </List>
+      <Pagination>
+          <Button
+            background="#7159c1"
+            disabled={page===1}
+            value="prev"
+            onClick={handlePrevPage}
+          >
+            <GoChevronLeft color="#FFF" size={20} />
+            <strong>ANTERIOR</strong>
+          </Button>
+          <span>{loading ? <FaSpinner /> : `Página ${page}`}</span>
+          <Button
+            background="#7159c1"
+            value="next"
+            disabled={(deliveryProblems.length < perPage || loading) && true}
+            onClick={handleNextPage}
+          >
+            <strong>PRÓXIMA</strong>
+            <GoChevronRight color="#FFF" size={20} />
+          </Button>
+        </Pagination>
     </>
   );
 }

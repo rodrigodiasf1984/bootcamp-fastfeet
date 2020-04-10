@@ -167,3 +167,25 @@ export const DeliveryStatus = styled.span`
 export const Title = styled.div`
   margin: 10px;
 `;
+
+export const Pagination = styled.div`
+  margin: 0px;
+  display: flex;
+  flex-direction: row;
+  margin-top:25px;
+  margin-bottom:5px;
+  height:auto;
+  justify-content: space-between;
+  align-items:center;
+  align-content:center;
+  min-width: 400px;
+
+  button{
+    margin-right:10px;
+  }
+
+  span{
+    font-size: 20px;
+  }
+
+`;
