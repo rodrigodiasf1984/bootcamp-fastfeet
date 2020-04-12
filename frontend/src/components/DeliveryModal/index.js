@@ -71,12 +71,11 @@ export default function DeliveryModal({closeModal, modalIsOpen, deliveryData}) {
           </div>
 
            {deliveryData.canceled_at &&(
-
              <div>
             <strong>Cancelada: </strong>
               {canceledDateFormatted}
           </div>
-             )
+            )
           }
         </Container>
         <Container>
