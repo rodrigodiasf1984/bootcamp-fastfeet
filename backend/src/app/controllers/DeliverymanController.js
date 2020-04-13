@@ -155,5 +155,29 @@ class DeliverymanController {
 
     return res.status(200).json({ message: 'Deliveryman deleted!' });
   }
+
+  async show(req, res) {
+    const { id } = req.params;
+
+    const deliveryman = await Deliveryman.findByPk(id, {
+      attributes: {
+        exclude: ['avatar_id'],
+      },
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['id', 'name', 'path', 'url'],
+        },
+      ],
+    });
+
+    if (!deliveryman) {
+      return res.status(400).json({ error: 'Deliveryman not found' });
+    }
+
+    return res.json(deliveryman);
+  }
+
 }
 export default new DeliverymanController();
