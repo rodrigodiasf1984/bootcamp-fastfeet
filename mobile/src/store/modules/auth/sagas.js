@@ -1,42 +1,29 @@
 import { takeLatest, call, put, all } from 'redux-saga/effects';
-import Toast from 'react-native-tiny-toast';
 import api from '~/services/api';
 import { signInSuccess, signFailure } from './actions';
-
-
-function toastErro({msg}) {
-  Toast.show(msg, {
-    position: Toast.position.TOP,
-    containerStyle: {
-      backgroundColor: '#7159c1',
-      borderRadius: 15,
-    },
-    textStyle: {
-      color: '#fff',
-    },
-    imgStyle: {},
-    mask: true,
-    maskStyle: {},
-  });
-}
+import * as Toast from '~/components/Toast/index';
 
 export function* signIn({ payload }) {
   try {
     const {id} = payload;
-
+    Toast.loading(true);
     const response = yield call(api.get, `deliverymans/${id}`);
 
     if (!response.data) {
-      toastErro('Utilizador não encontrado com o ID fornecido!');
+     Toast.error('Utilizador não encontrado com o ID fornecido!');
+     Toast.loading(false);
       return;
     }
 
     yield put(signInSuccess(response.data));
+    Toast.loading(false);
   } catch (error) {
-    toastErro('Houve um erro no login verifique seus dados');
+    //console.tron.log(error.response.data.error);
+    Toast.loading(false);
+    Toast.error(error.response.data.error);
     yield put(signFailure());
   }
-}
+}0
 
 export default all([
   takeLatest('@auth/SIGN_IN_REQUEST', signIn),
