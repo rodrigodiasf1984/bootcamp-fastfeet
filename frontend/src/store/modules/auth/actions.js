@@ -18,7 +18,7 @@ export function signFailure() {
   };
 }
 
-export function signOut() {
+export function signOutRequest() {
   return {
     type: '@auth/SIGN_OUT',
   };

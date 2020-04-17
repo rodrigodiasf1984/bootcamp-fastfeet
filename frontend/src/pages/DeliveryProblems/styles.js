@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-import Avatar from 'react-avatar';
-import { darken } from 'polished';
 
+export const Container=styled.div`
+  flex:1;
+`;
 export const List = styled.div`
   margin: 10px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr ;
   grid-row-gap: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   min-width: 400px;
@@ -62,29 +63,6 @@ export const ListActions = styled.main`
   height: 57px;
 `;
 
-export const Container = styled.div`
-  margin: 10px;
-  display: flex;
-  flex-direction: row;
-  margin-top: 30px;
-  justify-content: space-between;
-`;
-
-export const AvatarIcon = styled(Avatar).attrs({
-  // color: '#F4EFFC',
-  maxInitials: 2,
-  // fgColor: 'black',
-})`
-  display: flex;
-  justify-content: center;
-  span {
-    text-transform: uppercase;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-  }
-`;
-
 export const Title = styled.div`
   margin: 10px;
 `;
@@ -94,19 +72,23 @@ export const Pagination = styled.div`
   display: flex;
   flex-direction: row;
   margin-top:25px;
-  margin-bottom:5px;
-  height:auto;
   justify-content: space-between;
   align-items:center;
   align-content:center;
   min-width: 400px;
+  bottom:0 ;
 
   button{
     margin-right:10px;
   }
-
   span{
     font-size: 20px;
   }
+`;
 
+export const Description = styled.span.attrs({})`
+  justify-content: flex-start;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;

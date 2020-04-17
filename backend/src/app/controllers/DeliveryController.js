@@ -200,8 +200,8 @@ class DeliveryController {
         },
         order: ['created_at'],
         attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],
-        limit: 20, // lista somente 20 resultados
-        offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+        limit: 9, // lista somente 20 resultados
+        offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
         include: [
           // include faz o relacionamento entre o entrega e o entregador
           {
@@ -247,8 +247,8 @@ class DeliveryController {
     const listDeliveries = await Delivery.findAll({
       order: ['created_at'],
       attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],
-      limit: 20, // lista somente 20 resultados
-      offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+      limit: 9, // lista somente 9 resultados
+      offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
       include: [
         // include faz o relacionamento entre o entrega e o entregador
         {

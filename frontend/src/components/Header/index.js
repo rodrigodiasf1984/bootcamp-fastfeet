@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Content, Profile } from './styles';
-import { signOut } from '~/store/modules/auth/actions';
+import { signOutRequest } from '~/store/modules/auth/actions';
 import logo from '~/assets/fastfeet-logo.png';
 
 export default function Header() {
@@ -10,7 +10,7 @@ export default function Header() {
   const profile = useSelector((state) => state.user.profile);
 
   function handleSignOut() {
-    dispatch(signOut());
+    dispatch(signOutRequest());
   }
 
   return (

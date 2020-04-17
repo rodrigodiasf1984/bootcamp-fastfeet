@@ -30,9 +30,9 @@ class ShowDeliveriesController {
         end_date: filter === 'true' ? { [Op.ne]: null } : null,
       },
       order: ['created_at'],
-      attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at'],
-      limit: 20, // lista somente 20 resultados
-      offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+      attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at', 'createdAt'],
+      limit: 9, // lista somente 9 resultados
+      offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
       include: [
         // include faz o relacionamento entre o entrega e o entregador
         {
@@ -69,7 +69,7 @@ class ShowDeliveriesController {
       ],
     });
 
-    return res.json({ deliveries });
+    return res.json( deliveries );
   }
 }
 

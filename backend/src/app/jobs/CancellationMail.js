@@ -7,6 +7,7 @@ class CancellationMail {
 
   async handle({ data }) {
     const { deliveryProblem } = data;
+    if(deliveryProblem)
     Mail.sendMail({
       to: `${deliveryProblem.deliveryman.name}<${deliveryProblem.deliveryman.email}>`,
       subject: 'Entrega Cancelada',

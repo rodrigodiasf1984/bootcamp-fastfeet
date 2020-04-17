@@ -20,12 +20,12 @@ import Button from '~/components/Button';
 import api from '~/services/api';
 import blankAvatar from '~/assets/blank-profile-picture.webp';
 import { toast } from 'react-toastify';
-import history from '~/services/history';
+import PropTypes from 'prop-types';
 
 export default function Deliverymans() {
   const [deliverymans, setDeliverymans] = useState([]);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(9);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
 
@@ -65,16 +65,16 @@ export default function Deliverymans() {
     }
   }
 
-  async function handleDeleteDeliveryman(deleteDeliveryman){
+  async function handleDeleteDeliveryman(deleteDeliveryman) {
     //console.tron.log(deleteDeliveryman, 'apagar');
     await api.delete(`/deliverymans/${deleteDeliveryman.id}`)
-    .then(()=>{
-      toast.success('Entregador apagado com sucesso!');
-    })
-    .catch((err)=>{
-      console.tron.log(err.response);
-      toast.error(err.response.data.error);
-    });
+      .then(() => {
+        toast.success('Entregador apagado com sucesso!');
+      })
+      .catch((err) => {
+        console.tron.log(err.response);
+        toast.error(err.response.data.error);
+      });
     searchDeliverymans();
   }
 
@@ -176,3 +176,7 @@ export default function Deliverymans() {
     </>
   );
 }
+Deliverymans.propTypes = {
+  navigation: PropTypes.shape().isRequired,
+  route: PropTypes.shape().isRequired,
+};

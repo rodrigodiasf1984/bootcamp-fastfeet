@@ -5,7 +5,7 @@ import File from '../models/File';
 
 class DeliverymanController {
   async index(req, res) {
-    // paginação, mostra 20 resultados por página
+    // paginação, mostra 9 resultados por página
     const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
 
     if (q) {
@@ -17,8 +17,8 @@ class DeliverymanController {
           },
         },
         attributes: ['id', 'name', 'email'],
-        limit: 10, // lista somente 10 resultados
-        offset: (page - 1) * 10, // serve para determina quantos registos eu quero pular
+        limit: 9, // lista somente 9 resultados
+        offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
         include: [
           {
             model: File,
@@ -36,8 +36,8 @@ class DeliverymanController {
     // retorna a lista de agendamento do utlizador que fez a requisição
     const listDeliverymans = await Deliveryman.findAll({
       attributes: ['id', 'name', 'email'],
-      limit: 10, // lista somente 10 resultados
-      offset: (page - 1) * 10, // serve para determina quantos registos eu quero pular
+      limit: 9, // lista somente 9 resultados
+      offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
       include: [
         {
           model: File,

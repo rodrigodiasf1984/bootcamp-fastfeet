@@ -46,11 +46,11 @@ class PickUpDeliveryController {
         .status(400)
         .json({ error: "You can't pick up this delivery!" });
     }
-
+    const date= new Date();
     const { start_date } = req.body; // a data que vem do corpo da requição vem no formato de uma string
     const parsedStartDate = parseISO(start_date); // por este motivo temos que converter para data
 
-    if (isBefore(parsedStartDate, new Date())) {
+    if (isBefore(parsedStartDate, startOfDay(date))) {
       return res.status(400).json({
         error: "The start date can not be before today's date",
       });

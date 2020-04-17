@@ -2,7 +2,7 @@ import React from 'react';
 import { Container } from './styles';
 import Modal from 'react-modal'
 export default function DeliveryProblemModal({closeModal, modalIsOpen, deliveryData}) {
-  console.tron.log(deliveryData, 'modal');
+  //console.tron.log(deliveryData, 'modal');
   return (
     <div>
       <Modal
@@ -32,9 +32,9 @@ export default function DeliveryProblemModal({closeModal, modalIsOpen, deliveryD
       >
       <strong>VISUALIZAR PROBLEMA</strong>
         <Container>
-          {/* <p>Assinatura do destinatário</p> */}
-
-          {deliveryData.description}
+          <span>
+            {deliveryData}
+          </span>
         </Container>
       </Modal>
     </div>

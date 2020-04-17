@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   successIconContainer: {
     backgroundColor: '#11aa11',
-    height: 100,
-    width: 100,
+    height: 120,
+    width: 120,
   },
 });

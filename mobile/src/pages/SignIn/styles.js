@@ -11,6 +11,7 @@ export const Container = styled.KeyboardAvoidingView.attrs({
   justify-content:center;
   align-items: center;
   padding:0 30px;
+  background:#7d40e7;
 `;
 
 export const Logo=styled.Image`
@@ -31,4 +32,5 @@ export const FormInput = styled(Input)`
 
 export const SubmitButton = styled(Button)`
   margin-top:5px;
+  background:#82BF18;
 `;

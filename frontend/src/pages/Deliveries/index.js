@@ -19,17 +19,18 @@ import api from '~/services/api';
 import Modal from '~/components/DeliveryModal';
 import { toast } from 'react-toastify';
 import { FaSpinner } from 'react-icons/fa';
-import {GoChevronLeft,GoChevronRight} from 'react-icons/go';
+import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
 import Button from '~/components/Button';
+import PropTypes from 'prop-types';
 
 export default function Deliveries() {
   const [deliveries, setDeliveries] = useState([]);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage]=useState(10);
-  const [loading, setLoading]=useState(false);
-  const[ modalIsOpen, setModalIsOpen]=useState(false);
-  const[modalData, setModalData]=useState({});
-  const [searchInput, setSearchInput]=useState('');
+  const [perPage, setPerPage] = useState(9);
+  const [loading, setLoading] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalData, setModalData] = useState({});
+  const [searchInput, setSearchInput] = useState('');
 
   async function searchDeliveries() {
     setLoading(true);
@@ -68,69 +69,68 @@ export default function Deliveries() {
     searchDeliveries();
   }, [page]);
 
-  function handleRequestClose(){
+  function handleRequestClose() {
     setModalIsOpen(false);
   }
 
-  async function handleDeleteDelivery(deleteDelivery){
-    console.tron.log(deleteDelivery, 'apagar');
+  async function handleDeleteDelivery(deleteDelivery) {
+    //console.tron.log(deleteDelivery, 'apagar');
     await api.delete(`/deliveries/${deleteDelivery.id}`)
-    .then(()=>{
-      toast.success('Encomenda apagada com sucesso!');
-      searchDeliveries();
-    })
-    .catch((err)=>{
-      console.tron.log(err.response);
-      toast.error(err.response.data.error);
-    });
+      .then(() => {
+        toast.success('Encomenda apagada com sucesso!');
+        searchDeliveries();
+      })
+      .catch((err) => {
+        //console.tron.log(err.response);
+        toast.error(err.response.data.error);
+      });
   }
 
-  function handleRequestOpen(delivery){
-    const{product, recipient, start_date, end_date, signature, canceled_at}=delivery;
-    const deliveryData={
+  function handleRequestOpen(delivery) {
+    const { product, recipient, start_date, end_date, signature, canceled_at } = delivery;
+    const deliveryData = {
       product,
-      street:recipient.street,
-      street_number:recipient.street_number,
+      street: recipient.street,
+      street_number: recipient.street_number,
       complement: recipient.complement,
-      uf:recipient.uf,
-      city:recipient.city,
-      postal_code:recipient.postal_code,
+      uf: recipient.uf,
+      city: recipient.city,
+      postal_code: recipient.postal_code,
       start_date,
       end_date,
-      signature_url:signature === null ? '' : signature.url,
+      signature_url: signature === null ? '' : signature.url,
       canceled_at,
     }
     setModalData(deliveryData);
     setModalIsOpen(true);
   }
 
-  function handlePressEnter(e){
+  function handlePressEnter(e) {
     e.preventDefault();
-    if(e.keyCode===13 || e.wich===13){
+    if (e.keyCode === 13 || e.wich === 13) {
       searchDeliveries();
     }
   }
 
-  function handlePrevPage(){
+  function handlePrevPage() {
     setPage(page - 1);
   };
 
-  function handleNextPage(){
+  function handleNextPage() {
     setPage(page + 1);
   }
 
-  function handleSearchInput(e){
+  function handleSearchInput(e) {
     setSearchInput(e.target.value);
   }
 
-
   return (
     <>
-    <Modal
-      closeModal={handleRequestClose}
-      modalIsOpen={modalIsOpen}
-      deliveryData={modalData}
-    />
+      <Modal
+        closeModal={handleRequestClose}
+        modalIsOpen={modalIsOpen}
+        deliveryData={modalData}
+      />
       <Title>
         <header>
           <h1>Gerenciamento de encomendas</h1>
@@ -201,32 +201,37 @@ export default function Deliveries() {
               </DeliveryStatus>
             </ListMain>
             <ListActions>
-              <DropdownMenu inPackages delivery={delivery} editData={delivery} openModalFunction={handleRequestOpen} handleDelete={handleDeleteDelivery}/>
+              <DropdownMenu inPackages delivery={delivery} editData={delivery} openModalFunction={handleRequestOpen} handleDelete={handleDeleteDelivery} />
             </ListActions>
           </>
         ))}
       </List>
       <Pagination>
-          <Button
-            background="#7159c1"
-            disabled={page===1}
-            value="prev"
-            onClick={handlePrevPage}
-          >
-            <GoChevronLeft color="#FFF" size={20} />
-            <strong>ANTERIOR</strong>
-          </Button>
-          <span>{loading ? <FaSpinner /> : `Página ${page}`}</span>
-          <Button
-            background="#7159c1"
-            value="next"
-            disabled={(deliveries.length < perPage || loading) && true}
-            onClick={handleNextPage}
-          >
-            <strong>PRÓXIMA</strong>
-            <GoChevronRight color="#FFF" size={20} />
-          </Button>
-        </Pagination>
+        <Button
+          background="#7159c1"
+          disabled={page === 1}
+          value="prev"
+          onClick={handlePrevPage}
+        >
+          <GoChevronLeft color="#FFF" size={20} />
+          <strong>ANTERIOR</strong>
+        </Button>
+        <span>{loading ? <FaSpinner /> : `Página ${page}`}</span>
+        <Button
+          background="#7159c1"
+          value="next"
+          disabled={(deliveries.length < perPage || loading) && true}
+          onClick={handleNextPage}
+        >
+          <strong>PRÓXIMA</strong>
+          <GoChevronRight color="#FFF" size={20} />
+        </Button>
+      </Pagination>
     </>
   );
 }
+
+Deliveries.propTypes = {
+  navigation: PropTypes.shape().isRequired,
+  route: PropTypes.shape().isRequired,
+};

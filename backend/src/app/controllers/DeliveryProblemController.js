@@ -92,14 +92,14 @@ class DeliveryProblemController {
   }
 
   async index(req, res) {
-    // paginação, mostra 20 resultados por página
+    // paginação, mostra 9 resultados por página
     const { page = 1 } = req.query; // caso não seja informado o número da página, por padrão será a página 1
     // retorna a lista de entregas com problemas
     const deliverieswithProblems = await DeliveryProblem.findAll({
       order: ['created_at'],
       attributes: ['id', 'delivery_id', 'description'],
-      limit: 20, // lista somente 20 resultados
-      offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+      limit: 9, // lista somente 9 resultados
+      offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
       include: [
         {
           model: Delivery,
@@ -228,24 +228,26 @@ class DeliveryProblemController {
 
   async show(req, res) {
     // Lista todos os problemas de uma entrega
+
     const schemaParamd = Yup.object(req.params).shape({
-      delivery_id: Yup.number()
+      id: Yup.number()
         .positive()
         .required(),
     });
     if (!(await schemaParamd.isValid(req.params))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-    const { delivery_id } = req.params;
-    // paginação, mostra 20 resultados por página
+    const { id } = req.params;
+    console.log(id);
+    // paginação, mostra 9 resultados por página
     const { page = 1 } = req.query; // caso não seja informado o número da página, por padrão será a página 1
     // retorna a lista de entregas com problemas
     const deliverieswithProblems = await DeliveryProblem.findAll({
-      where: { delivery_id },
+      where: { delivery_id: id },
       order: ['created_at'],
-      attributes: ['id', 'delivery_id', 'description'],
-      limit: 20, // lista somente 20 resultados
-      offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+      attributes: ['id', 'delivery_id', 'description', 'created_at'],
+      limit: 9, // lista somente 9 resultados
+      offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
       include: [
         {
           model: Delivery,

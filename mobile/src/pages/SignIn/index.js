@@ -1,20 +1,27 @@
 import React, {useState} from 'react';
-import Background  from '~/components/Background';
 import { Container, Form, FormInput, SubmitButton, Logo } from './styles';
 import {useDispatch} from 'react-redux';
 import logo from '~/assets/logo.png';
 import {signInRequest} from '~/store/modules/auth/actions';
+import * as Toast from '~/components/Toast/index';
 
-export default function SignIn({navigation}) {
+export default function SignIn() {
   const dispatch=useDispatch();
   const [id, setId]=useState('');
 
-  function handleSubmit(){
-     dispatch(signInRequest(id));
-  }
+  //const loading=useSelector(state=>state.auth.loading);
 
+  function handleSubmit(){
+    Toast.loading(true);
+    if(id>0){
+      dispatch(signInRequest(id));
+
+    }else{
+      Toast.error('O ID tem que ser maior que 0, o mesmo é Obrigatório')
+    }
+    Toast.loading(false);
+  }
   return (
-    <Background>
       <Container>
         <Logo source={logo} size={150}/>
        <Form>
@@ -27,11 +34,9 @@ export default function SignIn({navigation}) {
             value={id}
             onChangeText={setId}
             />
-        {/* <SubmitButton onPress={()=>navigation.navigate('Dashboard') }>Entrar no sistema</SubmitButton> */}
-        <SubmitButton onPress={handleSubmit}>Entrar no sistema</SubmitButton>
+        <SubmitButton  onPress={handleSubmit}>Entrar no sistema</SubmitButton>
        </Form>
       </Container>
-    </Background>
   );
 }
 

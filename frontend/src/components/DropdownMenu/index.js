@@ -98,7 +98,7 @@ export default function DropdownMenu({ openModalFunction,openModalProblemFunctio
           inProblems &&(
             <Option>
             <IoMdEye color="#8E5BE8 " />
-            <button onClick={openModalProblemFunction} type="button">
+            <button onClick={()=>openModalProblemFunction(deliveryProblem)} type="button">
               Visualizar
             </button>
           </Option>

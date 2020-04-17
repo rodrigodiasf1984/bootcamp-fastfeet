@@ -4,7 +4,7 @@ import Recipient from '../models/Recipient';
 
 class RecipientController {
   async index(req, res) {
-    // paginação, mostra 20 resultados por página
+    // paginação, mostra 9 resultados por página
     const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
 
     if (q) {
@@ -26,8 +26,8 @@ class RecipientController {
           'city',
           'postal_code',
         ],
-        limit: 20, // lista somente 20 resultados
-        offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+        limit: 9, // lista somente 9 resultados
+        offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
       });
 
       if(recipientByName.length>0){
@@ -50,8 +50,8 @@ class RecipientController {
         'city',
         'postal_code',
       ],
-      limit: 20, // lista somente 20 resultados
-      offset: (page - 1) * 20, // serve para determina quantos registos eu quero pular
+      limit: 9, // lista somente 9 resultados
+      offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
     });
     return res.json(listRecipients);
   }

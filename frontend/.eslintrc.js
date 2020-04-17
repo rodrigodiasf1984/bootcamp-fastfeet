@@ -13,7 +13,7 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
-  parser:'babel-eslint',
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -27,11 +27,10 @@ module.exports = {
   ],
   rules: {
     'prettier/prettier': 'error',
-    'react/jsx-filename-extension':[
+    'react/jsx-filename-extension': [
       'warn',
-      {extensions:['.jsx','.js']}
+      { extensions: ['.jsx', '.js'] }
     ],
-    "prettier/prettier": "error",
     "react/jsx-filename-extension": ["error", { extensions: [".js", ".jsx"] }],
     "import/prefer-default-export": "off",
     "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
@@ -44,13 +43,13 @@ module.exports = {
     "no-console": ["error", { allow: ["tron"] }],
     "react/jsx-props-no-spreading": "off",
   },
-  settings:{
-    "import/resolver":{
-      "babel-plugin-root-import":{
-        rootPathSuffix:"src"
+  settings: {
+    "import/resolver": {
+      "babel-plugin-root-import": {
+        rootPathSuffix: "src"
       }
     }
   }
 
-  };
+};
 
