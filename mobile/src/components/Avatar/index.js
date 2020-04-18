@@ -1,28 +1,25 @@
-import React,{useState, useEffect} from 'react';
-import {useSelector} from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { CredentialsContainer, Letters } from './styles';
-import {Image} from 'react-native';
 
-export default function Avatar({...rest}) {
-  const deliveryman = useSelector(state=>state.auth.deliveryman);
-  const [initals, setInitials]= useState([]);
+export default function Avatar({ ...rest }) {
+  const deliveryman = useSelector((state) => state.auth.deliveryman);
+  const [initals, setInitials] = useState([]);
 
   async function getInitals() {
-    const name = deliveryman.name;
+    const { name } = deliveryman;
     let matches = name.match(/\b\w/g) || [];
     matches = ((matches.shift() || '') + (matches.pop() || '')).toUpperCase();
-    //console.tron.log(initials);
+    // console.tron.log(initials);
     setInitials(matches);
   }
   useEffect(() => {
     getInitals();
-
   }, []);
 
   return (
     <CredentialsContainer {...rest}>
-      <Letters >{initals}</Letters>
+      <Letters>{initals}</Letters>
     </CredentialsContainer>
   );
 }
-

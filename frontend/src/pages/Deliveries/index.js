@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { FaSpinner } from 'react-icons/fa';
+import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
+import PropTypes from 'prop-types';
 import {
   Container,
   DeliveryManName,
@@ -17,50 +21,55 @@ import SearchInput from '~/components/SearchInput';
 import DropdownMenu from '~/components/DropdownMenu';
 import api from '~/services/api';
 import Modal from '~/components/DeliveryModal';
-import { toast } from 'react-toastify';
-import { FaSpinner } from 'react-icons/fa';
-import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
 import Button from '~/components/Button';
-import PropTypes from 'prop-types';
 
 export default function Deliveries() {
   const [deliveries, setDeliveries] = useState([]);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(9);
   const [loading, setLoading] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState({});
   const [searchInput, setSearchInput] = useState('');
+  const perPage=9;
 
   async function searchDeliveries() {
     setLoading(true);
-    const response = await api.get('deliveries', {
-      params: {
-        page,
-        q: searchInput,
-      },
-    });
+    let response=[];
+    try {
+       response = await api.get('deliveries', {
+        params: {
+          page,
+          q: searchInput,
+        },
+      });
+      //console.tron.log(response.data);
+    } catch (error) {
+      console.tron.log(error);
+    }
+    if(response.data && response.data.length>0){
 
-    response.data.map((delivery) => {
-      delivery.id = delivery.id < 10 ? `0${delivery.id}` : delivery.id;
+      response.data.map((delivery) => {
+        delivery.id = delivery.id < 10 ? `0${delivery.id}` : delivery.id;
 
-      if (!delivery.start_date) {
-        delivery.status = 'PENDENTE';
-      }
-      if (delivery.start_date && !delivery.end_date) {
-        delivery.status = 'RETIRADA';
-      }
-      if (delivery.end_date) {
-        delivery.status = 'ENTREGUE';
-      }
-      if (delivery.canceled_at) {
-        delivery.status = 'CANCELADA';
-      }
+        if (!delivery.start_date) {
+          delivery.status = 'PENDENTE';
+        }
+        if (delivery.start_date && !delivery.end_date) {
+          delivery.status = 'RETIRADA';
+        }
+        if (delivery.end_date) {
+          delivery.status = 'ENTREGUE';
+        }
+        if (delivery.canceled_at) {
+          delivery.status = 'CANCELADA';
+        }
+        setDeliveries(response.data);
+        return delivery;
+      });
+    }else{
+      toast.error('Entrega não encontrada, verifique os dados digitados!');
+    }
 
-      return delivery;
-    });
-
-    setDeliveries(response.data);
     setLoading(false);
     setSearchInput('');
   }
@@ -74,20 +83,28 @@ export default function Deliveries() {
   }
 
   async function handleDeleteDelivery(deleteDelivery) {
-    //console.tron.log(deleteDelivery, 'apagar');
-    await api.delete(`/deliveries/${deleteDelivery.id}`)
+    // console.tron.log(deleteDelivery, 'apagar');
+    await api
+      .delete(`/deliveries/${deleteDelivery.id}`)
       .then(() => {
         toast.success('Encomenda apagada com sucesso!');
         searchDeliveries();
       })
       .catch((err) => {
-        //console.tron.log(err.response);
+        // console.tron.log(err.response);
         toast.error(err.response.data.error);
       });
   }
 
   function handleRequestOpen(delivery) {
-    const { product, recipient, start_date, end_date, signature, canceled_at } = delivery;
+    const {
+      product,
+      recipient,
+      start_date,
+      end_date,
+      signature,
+      canceled_at,
+    } = delivery;
     const deliveryData = {
       product,
       street: recipient.street,
@@ -100,7 +117,7 @@ export default function Deliveries() {
       end_date,
       signature_url: signature === null ? '' : signature.url,
       canceled_at,
-    }
+    };
     setModalData(deliveryData);
     setModalIsOpen(true);
   }
@@ -114,7 +131,7 @@ export default function Deliveries() {
 
   function handlePrevPage() {
     setPage(page - 1);
-  };
+  }
 
   function handleNextPage() {
     setPage(page + 1);
@@ -201,7 +218,13 @@ export default function Deliveries() {
               </DeliveryStatus>
             </ListMain>
             <ListActions>
-              <DropdownMenu inPackages delivery={delivery} editData={delivery} openModalFunction={handleRequestOpen} handleDelete={handleDeleteDelivery} />
+              <DropdownMenu
+                inPackages
+                delivery={delivery}
+                editData={delivery}
+                openModalFunction={handleRequestOpen}
+                handleDelete={handleDeleteDelivery}
+              />
             </ListActions>
           </>
         ))}

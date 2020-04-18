@@ -1,12 +1,12 @@
 export function editDelivery(delivery) {
   return {
     type: '@delivery/EDIT_REQUEST',
-    payload: {delivery},
+    payload: { delivery },
   };
 }
 
-export function clearDelivery(){
-  return{
-    type:'@delivery/CLEAR',
-  }
+export function clearDelivery() {
+  return {
+    type: '@delivery/CLEAR',
+  };
 }

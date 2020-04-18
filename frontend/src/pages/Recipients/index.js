@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { FaSpinner } from 'react-icons/fa';
+import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
+import PropTypes from 'prop-types';
 import {
   Container,
   RecipientName,
@@ -9,34 +13,41 @@ import {
   ListMain,
   ListActions,
   Title,
-  Pagination
+  Pagination,
 } from './styles';
 
 import SearchInput from '~/components/SearchInput';
 import DropdownMenu from '~/components/DropdownMenu';
-import { toast } from 'react-toastify';
 import api from '~/services/api';
-import { FaSpinner } from 'react-icons/fa';
-import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
 import Button from '~/components/Button';
-import PropTypes from 'prop-types';
 
 export default function Recipients() {
   const [recipients, setRecipient] = useState([]);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(9);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const perPage=9;
 
   async function searchRecipient() {
-    const response = await api.get('recipients', {
-      params: {
-        page,
-        q: searchInput,
-      },
-    });
 
-    setRecipient(response.data);
+    let response=[];
+    try {
+        response = await api.get('recipients', {
+        params: {
+          page,
+          q: searchInput,
+        },
+      });
+
+    } catch (error) {
+      console.tron.log(error);
+    }
+    if(response.data && response.data.length>0){
+      setRecipient(response.data);
+    }else{
+      toast.error('Destinatário não encontrado, verifique os dados digitados!');
+    }
+
     setLoading(false);
     setSearchInput('');
   }
@@ -46,8 +57,8 @@ export default function Recipients() {
 
   async function handleDeleteRecipient(deleteRecipient) {
     console.tron.log(deleteRecipient, 'apagar');
-    await api.
-      delete(`/recipients/${deleteRecipient.id}`)
+    await api
+      .delete(`/recipients/${deleteRecipient.id}`)
       .then(() => {
         toast.success('Destinatário apagado com sucesso!');
         setSearchInput('');
@@ -60,7 +71,7 @@ export default function Recipients() {
   }
   function handlePrevPage() {
     setPage(page - 1);
-  };
+  }
 
   function handleNextPage() {
     setPage(page + 1);
@@ -127,7 +138,12 @@ export default function Recipients() {
               </span>
             </ListMain>
             <ListActions>
-              <DropdownMenu inRecipients recipient={recipient} editData={recipient} handleDelete={handleDeleteRecipient} />
+              <DropdownMenu
+                inRecipients
+                recipient={recipient}
+                editData={recipient}
+                handleDelete={handleDeleteRecipient}
+              />
             </ListActions>
           </>
         ))}

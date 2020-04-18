@@ -10,5 +10,5 @@ export default combineReducers({
   user,
   delivery,
   recipient,
-  deliveryman
+  deliveryman,
 });

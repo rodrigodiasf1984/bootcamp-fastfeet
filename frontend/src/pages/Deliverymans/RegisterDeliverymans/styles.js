@@ -23,8 +23,8 @@ export const ContentForm = styled.div`
   align-items: center;
   justify-items: center;
   border-radius: 5px;
-  div{
-    margin-top:5px;
+  div {
+    margin-top: 5px;
   }
 `;
 
@@ -41,4 +41,3 @@ export const ContentInput = styled.div`
   flex-direction: column;
   width: 105%;
 `;
-

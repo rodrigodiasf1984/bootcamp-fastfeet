@@ -35,16 +35,15 @@ class DeliveryController {
     if (!recipient)
       return res.status(400).json({ error: 'Recipient not found' });
 
-    const checkDeliveryExists = await Delivery.findOne({
-      where: {
-        recipient_id,
-        deliveryman_id,
-        product,
-      },
-    });
+    // const checkDeliveryExists = await Delivery.findOne({
+    //   where: {
+    //     recipient_id,
+    //     deliveryman_id,
+    //   },
+    // });
 
-    if (checkDeliveryExists)
-      return res.status(400).json({ error: 'Delivery already exists' });
+    // if (checkDeliveryExists)
+    //   return res.status(400).json({ error: 'Delivery already exists' });
 
     const delivery = await Delivery.create(req.body);
     await Queue.add(RegistrationMail.key, {

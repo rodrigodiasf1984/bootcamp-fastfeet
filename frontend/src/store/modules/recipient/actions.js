@@ -1,12 +1,12 @@
 export function editRecipient(recipient) {
   return {
     type: '@recipient/EDIT_REQUEST',
-    payload: {recipient},
+    payload: { recipient },
   };
 }
 
-export function clearRecipient(){
-  return{
-    type:'@recipient/CLEAR',
-  }
+export function clearRecipient() {
+  return {
+    type: '@recipient/CLEAR',
+  };
 }

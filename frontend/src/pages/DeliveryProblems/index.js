@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { FaSpinner } from 'react-icons/fa';
+import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
+import PropTypes from 'prop-types';
 import {
   List,
   ListHeader,
@@ -13,33 +17,39 @@ import {
 import DropdownMenu from '~/components/DropdownMenu';
 import api from '~/services/api';
 import Modal from '~/components/DeliveryProblemModal';
-import { toast } from 'react-toastify';
 import Button from '~/components/Button';
-import { FaSpinner } from 'react-icons/fa';
-import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
 import SearchInput from '~/components/SearchInput';
 import formatString from '~/utils/formatString';
-import PropTypes from 'prop-types';
 
 export default function DeliveryProblems() {
   const [deliveryProblems, setDeliveryProblems] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState({});
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(9);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const perPage=9;
 
   async function searchDeliveryProblems() {
     setLoading(true);
-    const response = await api.get('delivery/problems', {
-      params: {
-        page,
-        q: searchInput,
-      },
-    });
+    let response=[];
+    try {
+       response = await api.get('delivery/problems', {
+        params: {
+          page,
+          q: searchInput,
+        },
+      });
+      //console.tron.log(response.data);
+    } catch (error) {
+      console.tron.log(error);
+    }
+    if(response.data && response.data.length>0){
+      setDeliveryProblems(response.data);
+    }else{
+      toast.error('Problema não encontrado, verifique os dados digitados!');
+    }
 
-    setDeliveryProblems(response.data);
     setLoading(false);
     setSearchInput('');
   }
@@ -52,27 +62,28 @@ export default function DeliveryProblems() {
   }
 
   async function handleCancelDelivery(cancelDelivery) {
-    //console.tron.log(cancelDelivery, 'apagar');
-    await api.delete(`/problem/${cancelDelivery.delivery.id}/cancel-delivery`)
+    // console.tron.log(cancelDelivery, 'apagar');
+    await api
+      .delete(`/problem/${cancelDelivery.delivery.id}/cancel-delivery`)
       .then(() => {
         toast.success('Encomenda cancelada com sucesso!');
         searchDeliveryProblems();
       })
       .catch((err) => {
-        //console.tron.log(err.response);
+        // console.tron.log(err.response);
         toast.error(err.response.data.error);
       });
   }
 
   function handleRequestOpen(deliveryProblem) {
-    //console.tron.log(deliveryProblem.description, 'tttttttttt');
+    // console.tron.log(deliveryProblem.description, 'tttttttttt');
     setModalData(deliveryProblem.description);
     setModalIsOpen(true);
   }
 
   function handlePrevPage() {
     setPage(page - 1);
-  };
+  }
 
   function handleNextPage() {
     setPage(page + 1);
@@ -80,12 +91,13 @@ export default function DeliveryProblems() {
 
   function handleSearchInput(e) {
     setSearchInput(e.target.value);
+    console.tron.log(searchInput);
   }
 
   function handlePressEnter(e) {
     e.preventDefault();
     if (e.keyCode === 13 || e.wich === 13) {
-      setDeliveryProblems();
+      searchDeliveryProblems();
     }
   }
 
@@ -122,13 +134,20 @@ export default function DeliveryProblems() {
         {deliveryProblems.map((deliveryProblem) => (
           <>
             <ListMain key={deliveryProblem.id}>
-              <span>#{deliveryProblem.id}</span>
+              <span>#{deliveryProblem.delivery_id}</span>
             </ListMain>
             <ListMain>
-              <Description>{formatString(deliveryProblem.description, 100)}</Description>
+              <Description>
+                {formatString(deliveryProblem.description, 50)}
+              </Description>
             </ListMain>
             <ListActions>
-              <DropdownMenu inProblems deliveryProblem={deliveryProblem} openModalProblemFunction={handleRequestOpen} handleDelete={handleCancelDelivery} />
+              <DropdownMenu
+                inProblems
+                deliveryProblem={deliveryProblem}
+                openModalProblemFunction={handleRequestOpen}
+                handleDelete={handleCancelDelivery}
+              />
             </ListActions>
           </>
         ))}

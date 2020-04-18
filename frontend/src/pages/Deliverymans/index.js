@@ -3,6 +3,8 @@ import { MdAdd } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import { FaSpinner } from 'react-icons/fa';
 import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
+import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 import {
   Container,
   DeliveryManName,
@@ -19,26 +21,34 @@ import DropdownMenu from '~/components/DropdownMenu';
 import Button from '~/components/Button';
 import api from '~/services/api';
 import blankAvatar from '~/assets/blank-profile-picture.webp';
-import { toast } from 'react-toastify';
-import PropTypes from 'prop-types';
 
 export default function Deliverymans() {
   const [deliverymans, setDeliverymans] = useState([]);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(9);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const perPage=9;
 
   async function searchDeliverymans() {
     setLoading(true);
-    const response = await api.get('deliverymans', {
-      params: {
-        page,
-        q: searchInput,
-      },
-    });
+    let response=[];
+    try {
+       response = await api.get('deliverymans', {
+        params: {
+          page,
+          q: searchInput,
+        },
+      });
 
-    setDeliverymans(response.data);
+    } catch (error) {
+      console.tron.log(error);
+    }
+    if(response.data && response.data.length>0){
+      setDeliverymans(response.data);
+    }else{
+      toast.error('Entregador não encontrado, verifique os dados digitados!');
+    }
+
     setLoading(false);
     setSearchInput('');
   }
@@ -66,8 +76,9 @@ export default function Deliverymans() {
   }
 
   async function handleDeleteDeliveryman(deleteDeliveryman) {
-    //console.tron.log(deleteDeliveryman, 'apagar');
-    await api.delete(`/deliverymans/${deleteDeliveryman.id}`)
+    // console.tron.log(deleteDeliveryman, 'apagar');
+    await api
+      .delete(`/deliverymans/${deleteDeliveryman.id}`)
       .then(() => {
         toast.success('Entregador apagado com sucesso!');
       })

@@ -18,10 +18,18 @@ export default function Header() {
       <Content>
         <nav>
           <img src={logo} alt="FastFeet" />
-          <NavLink to="/deliveries" activeStyle={{color:'#444444'}}>ENCOMENDAS</NavLink>
-          <NavLink to="/deliverymans" activeStyle={{color:'#444444'}}>ENTREGADORES</NavLink>
-          <NavLink to="/recipients" activeStyle={{color:'#444444'}}>DESTINATÁRIOS</NavLink>
-          <NavLink to="/deliveryProblems" activeStyle={{color:'#444444'}}>PROBLEMAS</NavLink>
+          <NavLink to="/deliveries" activeStyle={{ color: '#444444' }}>
+            ENCOMENDAS
+          </NavLink>
+          <NavLink to="/deliverymans" activeStyle={{ color: '#444444' }}>
+            ENTREGADORES
+          </NavLink>
+          <NavLink to="/recipients" activeStyle={{ color: '#444444' }}>
+            DESTINATÁRIOS
+          </NavLink>
+          <NavLink to="/deliveryProblems" activeStyle={{ color: '#444444' }}>
+            PROBLEMAS
+          </NavLink>
         </nav>
         <Profile>
           <div>

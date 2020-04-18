@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { format, parseISO } from 'date-fns';
+import PropTypes from 'prop-types';
 import Background from '~/components/Background';
 import { Container, List, Content, TitleProblem } from './styles';
 import api from '~/services/api';
-import { format, parseISO } from 'date-fns'
 import Problem from '~/components/Problem';
-import PropTypes from 'prop-types';
 
-export default function ListProblems({ route, navigation }) {
+export default function ListProblems({ route }) {
   const [problems, setProblems] = useState('');
   const id = route.params;
   useEffect(() => {
     async function loadProblems() {
       const response = await api.get(`/delivery/${id}/problems`);
 
-      const data = response.data.map(item => ({
+      const data = response.data.map((item) => ({
         ...item,
         createdDate: format(parseISO(item.created_at), 'dd/MM/yyyy'),
       }));
@@ -21,7 +21,7 @@ export default function ListProblems({ route, navigation }) {
       setProblems(data);
     }
     loadProblems();
-  }, [])
+  }, []);
 
   return (
     <>
@@ -31,10 +31,8 @@ export default function ListProblems({ route, navigation }) {
           <TitleProblem>Encomenda {id}</TitleProblem>
           <List
             data={problems}
-            keyExtractor={item => String(item.id)}
-            renderItem={({ item }) => (
-              <Problem data={item} />
-            )}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => <Problem data={item} />}
           />
         </Content>
       </Container>
@@ -43,6 +41,5 @@ export default function ListProblems({ route, navigation }) {
 }
 
 ListProblems.propTypes = {
-  navigation: PropTypes.shape().isRequired,
   route: PropTypes.shape().isRequired,
 };

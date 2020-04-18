@@ -1,28 +1,33 @@
 import React, { useState } from 'react';
-import Background from '~/components/Background';
-import {
-  Container, Content, SubmitButton,
-  CameraContainer, StyledCamera, CaptureContainer,
-  CameraCapButton,
-
-} from './styles';
-import api from '~/services/api';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import * as Toast from '~/components/Toast';
 import ImageResizer from 'react-native-image-resizer';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import Background from '~/components/Background';
+import {
+  Container,
+  Content,
+  SubmitButton,
+  CameraContainer,
+  StyledCamera,
+  CaptureContainer,
+  CameraCapButton,
+} from './styles';
+import api from '~/services/api';
+import * as Toast from '~/components/Toast';
+import { update } from '~/store/modules/deliveries/actions';
 
 export default function ConfirmDelivery({ route, navigation }) {
   const [preview, setPreview] = useState(false);
   const [urlImage, setImageUrl] = useState('');
   const { delivery_id, deliveryman_id } = route.params;
-  //console.tron.log(route.params);
+  const dispatch = useDispatch();
   let camera;
 
   async function handleConfirm() {
     Toast.loading(true);
     const file = new FormData();
-    //console.tron.log(urlImage, 'image');
+    // console.tron.log(urlImage, 'image');
     const resizedImage = await ImageResizer.createResizedImage(
       urlImage,
       500,
@@ -32,12 +37,21 @@ export default function ConfirmDelivery({ route, navigation }) {
       0,
       null
     );
-    file.append('file', { uri: resizedImage.uri, name: resizedImage.name, type: 'image/jpg' });
-
-    const response = await api.put(`/deliveryman/${deliveryman_id}/deliveries_status/${delivery_id}`, file, {
-      end_date: new Date()
+    file.append('file', {
+      uri: resizedImage.uri,
+      name: resizedImage.name,
+      type: 'image/jpg',
     });
-    console.tron.log(response, 'resp');
+
+    const response = await api.put(
+      `/deliveryman/${deliveryman_id}/deliveries_status/${delivery_id}`,
+      file,
+      {
+        end_date: new Date(),
+      }
+    );
+    // console.tron.log(response, 'resp');
+    dispatch(update(true));
     Toast.loading(false);
     Toast.successIcon('Entrega confirmada!');
     navigation.navigate('Deliveries');
@@ -57,7 +71,7 @@ export default function ConfirmDelivery({ route, navigation }) {
         setPreview(true);
         Toast.successIcon('Foto salva com sucesso!');
         setImageUrl(data.uri);
-        //console.tron.log(data.uri);
+        // console.tron.log(data.uri);
       }
     } catch (error) {
       console.tron.log(error);
@@ -76,10 +90,10 @@ export default function ConfirmDelivery({ route, navigation }) {
         <Content>
           <CameraContainer>
             <StyledCamera
-              ref={ref => {
+              ref={(ref) => {
                 camera = ref;
               }}
-              //style={styles.preview}
+              // style={styles.preview}
               type={StyledCamera.Constants.Type.back}
               flashMode={StyledCamera.Constants.FlashMode.on}
               androidCameraPermissionOptions={{
@@ -89,17 +103,16 @@ export default function ConfirmDelivery({ route, navigation }) {
                 buttonNegative: 'Cancel',
               }}
             />
-            <CaptureContainer >
+            <CaptureContainer>
               {preview ? (
-                <CameraCapButton onPress={handlePreview} >
-                  <Icon name="close" size={40} color='#fff' />
+                <CameraCapButton onPress={handlePreview}>
+                  <Icon name="close" size={40} color="#fff" />
                 </CameraCapButton>
               ) : (
-                  <CameraCapButton onPress={handleTakePicture} >
-                    <Icon name="photo-camera" size={40} color='#fff' />
-                  </CameraCapButton>
-                )
-              }
+                <CameraCapButton onPress={handleTakePicture}>
+                  <Icon name="photo-camera" size={40} color="#fff" />
+                </CameraCapButton>
+              )}
             </CaptureContainer>
           </CameraContainer>
         </Content>

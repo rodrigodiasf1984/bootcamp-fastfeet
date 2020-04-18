@@ -28,7 +28,7 @@ export const Button = styled.button.attrs((props) => ({
   }
 
   &:hover {
-    /* background: ${props =>darken(0.03, props.background)}; */
+    /* background: ${(props) => darken(0.03, props.background)}; */
     background: ${darken(0.03, '#7159c1')};
   }
 

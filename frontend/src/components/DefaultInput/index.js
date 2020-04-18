@@ -1,6 +1,6 @@
 import React from 'react';
+import { Input } from '@rocketseat/unform';
 import { Container } from './styles';
-import {Input} from '@rocketseat/unform';
 
 export default function SearchInput({ ...rest }) {
   return (

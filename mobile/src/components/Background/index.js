@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
-export default Container = styled.View`
+export default styled.View`
   flex: 1;
-  background:#7D40E7;
-  max-height:100px;
+  background: #7d40e7;
+  max-height: 100px;
 `;

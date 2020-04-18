@@ -6,7 +6,7 @@ import DeliveryProblem from '../models/Deliveryproblem';
 import File from '../models/File';
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
-
+import { Op } from 'sequelize';
 class DeliveryProblemController {
   async delete(req, res) {
     const schemaParamd = Yup.object(req.params).shape({
@@ -93,9 +93,14 @@ class DeliveryProblemController {
 
   async index(req, res) {
     // paginação, mostra 9 resultados por página
-    const { page = 1 } = req.query; // caso não seja informado o número da página, por padrão será a página 1
+    const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
     // retorna a lista de entregas com problemas
     const deliverieswithProblems = await DeliveryProblem.findAll({
+      where: {
+        description: {
+          [Op.iLike]: `${q}%`,
+        },
+      },
       order: ['created_at'],
       attributes: ['id', 'delivery_id', 'description'],
       limit: 9, // lista somente 9 resultados
@@ -238,7 +243,7 @@ class DeliveryProblemController {
       return res.status(400).json({ error: 'Validation fails' });
     }
     const { id } = req.params;
-    console.log(id);
+    // console.log(id);
     // paginação, mostra 9 resultados por página
     const { page = 1 } = req.query; // caso não seja informado o número da página, por padrão será a página 1
     // retorna a lista de entregas com problemas

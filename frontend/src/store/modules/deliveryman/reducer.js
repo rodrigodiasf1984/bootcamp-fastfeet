@@ -2,7 +2,6 @@ import produce from 'immer';
 
 const INITIAL_STATE = {
   data: null,
-
 };
 
 export default function deliveryman(state = INITIAL_STATE, action) {
@@ -12,8 +11,9 @@ export default function deliveryman(state = INITIAL_STATE, action) {
         draft.data = action.payload.deliveryman;
         break;
       }
-      case'@deliveryman/CLEAR':{
-        draft.data=null;
+      case '@deliveryman/CLEAR': {
+        draft.data = null;
+        break;
       }
       default:
     }

@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
-export const Container=styled.div`
-  flex:1;
+export const Container = styled.div`
+  flex: 1;
 `;
 export const List = styled.div`
   margin: 10px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr ;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-row-gap: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   min-width: 400px;
@@ -71,17 +71,17 @@ export const Pagination = styled.div`
   margin: 0px;
   display: flex;
   flex-direction: row;
-  margin-top:25px;
+  margin-top: 25px;
   justify-content: space-between;
-  align-items:center;
-  align-content:center;
+  align-items: center;
+  align-content: center;
   min-width: 400px;
-  bottom:0 ;
+  bottom: 0;
 
-  button{
-    margin-right:10px;
+  button {
+    margin-right: 10px;
   }
-  span{
+  span {
     font-size: 20px;
   }
 `;

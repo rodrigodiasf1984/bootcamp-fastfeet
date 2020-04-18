@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Background from '~/components/Background';
 import { Container, SubmitButton, Form, InputText } from './styles';
 import api from '~/services/api';
 import * as Toast from '~/components/Toast';
-import PropTypes from 'prop-types';
 
 export default function DeliveryProblem({ route, navigation }) {
   const [textInput, setTextInput] = useState('');
@@ -11,14 +11,13 @@ export default function DeliveryProblem({ route, navigation }) {
 
   async function handleProblem() {
     try {
-      const response = await api.post(`/delivery/${id}/problems`, {
-        description: textInput
+      await api.post(`/delivery/${id}/problems`, {
+        description: textInput,
       });
       Toast.successIcon('Problema cadastrado');
       navigation.goBack();
     } catch (error) {
-      Toast.error(response.data.error);
-      //console.tron.log(error, 'P2');
+      Toast.error(error.response.data.error);
     }
   }
 
@@ -28,8 +27,8 @@ export default function DeliveryProblem({ route, navigation }) {
       <Container>
         <Form>
           <InputText
-            placeholder={'Inclua aqui o problema que ocorreu na entrega'}
-            multiline={true}
+            placeholder="Inclua aqui o problema que ocorreu na entrega"
+            multiline
             value={textInput}
             onChangeText={setTextInput}
           />

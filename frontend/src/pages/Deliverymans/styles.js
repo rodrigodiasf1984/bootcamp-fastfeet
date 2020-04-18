@@ -29,22 +29,21 @@ export const Pagination = styled.div`
   margin: 0px;
   display: flex;
   flex-direction: row;
-  margin-top:25px;
-  margin-bottom:5px;
-  height:auto;
+  margin-top: 25px;
+  margin-bottom: 5px;
+  height: auto;
   justify-content: space-between;
-  align-items:center;
-  align-content:center;
+  align-items: center;
+  align-content: center;
   min-width: 400px;
 
-  button{
-    margin-right:10px;
+  button {
+    margin-right: 10px;
   }
 
-  span{
+  span {
     font-size: 20px;
   }
-
 `;
 
 export const List = styled.div`
@@ -54,7 +53,7 @@ export const List = styled.div`
   grid-row-gap: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   min-width: 400px;
-  height:auto;
+  height: auto;
 `;
 
 export const ListHeader = styled.div`
@@ -134,5 +133,3 @@ export const AvatarIcon = styled(Avatar).attrs({
 export const Title = styled.div`
   margin: 10px;
 `;
-
-

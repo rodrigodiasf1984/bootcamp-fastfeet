@@ -2,7 +2,6 @@ import produce from 'immer';
 
 const INITIAL_STATE = {
   profile: null,
-
 };
 
 export default function user(state = INITIAL_STATE, action) {
@@ -16,7 +15,6 @@ export default function user(state = INITIAL_STATE, action) {
         draft.profile = null;
         break;
       }
-
       default:
     }
   });
