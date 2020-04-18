@@ -4,20 +4,21 @@
 
 <h3 align="center">
   Desafio 5: FastFeet Projeto Final
+  https://github.com/Rocketseat/bootcamp-gostack-desafio-03/raw/master/.github/logo.png
 </h3>
 
 ## :rocket: Sobre o desafio
 
-Criar uma aplicação com **Node js **, **React JS**, **Reac-Native**.
+Criar uma aplicação com **Node js**, **React JS**, **Reac-Native**.
 
 <h3 align="center">
   Funcionalidades Administrador:
 </h3>
 
-1. Gestão de entregadores
+1.Gestão de entregadores
 Cadastrar, editar, eliminar entregadores na plataforma.
 
-2. Gestão de encomendas
+2.Gestão de encomendas
 Cadastrar, editar, excluir, cancelar encomendas para os entregadores.
 Quando uma encomenda for cadastrada, o entregador deve receber um e-mail informando-o sobre a nova entrega atribuída ao mesmo.
 Quando uma encomenda for cancelada, o entregador deve receber um e-mail informando-o sobre o cancelamento.
