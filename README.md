@@ -1,72 +1,129 @@
-<h1 align="center">
-    <img alt="GoStack" src="https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/bootcamp-header.png" width="200px" />
+
+<h2 align="center">
+    Aplicação completa (Back-end, Front-end e Mobile)
 </h1>
 
-<h3 align="center">
-  Desafio 5: FastFeet Projeto Final   
-</h3>
 <h1 align="center">
-    <img alt="Fastfeet" src="https://github.com/Rocketseat/bootcamp-gostack-desafio-03/raw/master/.github/logo.png" width="200px"/>
+<img src="https://raw.githubusercontent.com/MicaelliMedeiros/FastFeet/master/.github/Sem%20T%C3%ADtulo-1.jpg" width="70%" heigth="70%" />
 </h1>
 
-## :rocket: Sobre o desafio
+---
 
-Criar uma aplicação com **Node js**, **React JS**, **Reac-Native**.
 
-<h3 align="center">
-  Funcionalidades Administrador:
-</h3>
+### :pencil: Requerimentos
 
-1. Gestão de entregadores
-Cadastrar, editar, eliminar entregadores na plataforma.
+_Para rodar a aplicação é necessário que você possua esses três programas:_
+* [Git](https://git-scm.com)
+* [Node](https://nodejs.org/)
+* [Yarn](https://yarnpkg.com/)
 
-2. Gestão de encomendas
-Cadastrar, editar, excluir, cancelar encomendas para os entregadores.
-Quando uma encomenda for cadastrada, o entregador deve receber um e-mail informando-o sobre a nova entrega atribuída ao mesmo.
-Quando uma encomenda for cancelada, o entregador deve receber um e-mail informando-o sobre o cancelamento.
 
-3. Gestão de destinatários
-Cadastrar, editar, eliminar destinatários na plataforma.
+### Também foram utilizados três bancos de dados da aplicação
+- [Postgres](https://github.com/postgres/postgres)
+- [MongoDB](https://www.mongodb.com/)
+- [Redis](https://redis.io/)
 
-4. Gestão de problemas
-Visualizar
+### Porém, para facilitar, usamos o [Docker](https://www.docker.com/) para rodar os bancos de dados facilmente. Dentro dele siga estes passos:
 
-<h3 align="center">
-  Funcionalidades do entregador:
-</h3>
+```bash
+# Instale uma imagem do Redis
+docker run --name redisfastfeet -p 6379:6379 -d -t redis:alpine
 
-1. Visualizar encomendas
-Para que o entregador possa visualizar suas encomendas, ele deverá informar apenas seu ID de cadastro (ID do entregador no banco de dados). Essa funcionalidade deve retornar as encomendas atribuidas a ele, que não estejam entregues ou canceladas;
-Permite também que ele liste apenas as encomendas que já foram entregues por ele, com base em seu ID de cadastro;
+# Instale uma imagem do Postgres
+docker run --name fastfeet -e POSTGRES_PASSWORD=fastfeet -p 5432:5432 -d postgres
+(Neste caso, seu login e senha será: fastfeet)
 
-2. Alterar status de encomendas
-Permite que o entregador insira uma data de retirada (start_date) e data de entrega (end_date) para as encomendas. O entregador só pode fazer 5 retiradas por dia.
-Para a funcionalidade de finalizar a entrega, permite o envio de uma imagem que irá preencher o campo signature_id da tabela de encomendas.
+# Inicie o Redis
+docker start redisfastfeet
 
-3. Cadastrar problemas nas entregas
-Cadastrar, visualizar problemas referentes a entrega.
+# Inicie o Postgres
+docker start fastfeet
 
-## :clipboard: Iniciando a aplicação
+```
+### :open_file_folder: Iniciando o Backend
+Agora clone este repositório e instale suas dependências
+```bash
+# clonando o repositório
+git clone https://github.com/MicaelliMedeiros/FastFeet.git
 
-1. Clone o repositório com `git clone https://github.com/rodrigodiasf1984/Desafio06.git`
-2. Entre dentro da pasta do projeto e abra um terminal, para o backend é preciso 2x o terminal `cd backend, cd frontend, cd mobile`
-3. Instale todas as dependencias com o comando `yarn`
-4. Abra um terminal para backend API REST => Digite `yarn dev` para rodar o backend
-5. Abra um terminal para backend REDIS=> Digite `yarn queue` para iniciar as filas
-6. Abra um terminal para frontend =>Digite `yarn start` para iniciar o plataforma online
-7. Abrir o emulador do Android
-8. Abra um terminal para o Mobile => Digite `React-native run-android` para instalar o app no emulador
+# entrando na pasta do backend
+cd backend
 
-## :hammer: Ferramentas usadas
+#instalando as dependências
+yarn
 
-- ⚛️ **React-native** - Uma biblioteca JavaScript para criar mobile Apps 
-- ⚛️ **Styled Components** - Biblioteca Javascript pra estilizar componentes
-- 📄 **Axios** - Biblioteca Javascript para fazer requisições http
-- 📄 **ESLint** - Biblioteca Javascript para procurar e resolver problemas no codigo
+```
+Para que haja a conexão do backend com o banco de dados, você precisará colocar suas informações no arquivo .env, baseado no .env.example que está dentro do backend. Após isto, no terminal é necessário enviar as migrations para o banco de dados:
 
-## :camera: Demonstração
+```bash
+# rodando as migrations para o banco
+yarn sequelize db:migrate
+
+# permitindo que haja o administrador no banco
+yarn sequelize db:seed:all
+
+# iniciando a aplicação
+yarn dev & yarn queue
+```
+
+Após estes passos, você poderá iniciar o frontend ou o mobile!
+
+---
+
+### :computer: Frontend do Fastfeet
+
+_Abra um terminal na pasta do frontend e digite:_
+```bash
+yarn
+yarn start
+```
+_Use estes dados para realizar login na aplicação:_
+<blockquote><strong>Email:</strong> admin@fastfeet.com</blockquote>
+<blockquote> <strong>Senha:</strong> 123456</blockquote>
+
+
 <h1 align="center">
+<img src="https://raw.githubusercontent.com/MicaelliMedeiros/FastFeet/master/frontend/.github/image1.jpg" width="50%" height="50%" /><img src="https://raw.githubusercontent.com/MicaelliMedeiros/FastFeet/master/frontend/.github/image2.jpg" width="50%" height="50%" />
+
+___
+
+### :iphone: Aplicativo mobile do Fastfeet
+
+_Esta aplicação foi desenvolvida usando o Expo. [Clique aqui](https://expo.io/learn) para conhecê-lo!_
+
+```bash
+# para instalar as dependências
+cd mobile
+yarn
+```
+
+_Após isto, você precisa mudar para o ip de sua máquina neste arquivo:_
+[api.js](https://github.com/MicaelliMedeiros/FastFeet/blob/master/mobile/src/services/api.js)
+```javascript
+  baseURL: 'http://192.168.0.14:3334',
+```
+
+_Substitua 192.168.0.14 com o ip de sua máquina._
+_Se você quiser usar o Reactotron mude o ip neste arquivo também:_
+[ReactotronConfig](https://github.com/MicaelliMedeiros/FastFeet/blob/master/mobile/src/config/ReactotronConfig.js)
+```javascript
+  .configure({ host: '192.168.0.14' })
+```
+
+_Agora basta rodar a aplicação._
+```bash
+
+# para rodar a aplicação
+yarn start
+
+```
+_O Expo vai abrir uma página em seu navegador, use o QRcode no seu aplicativo e aguarde a aplicação iniciar._
+
+> A aplicação foi desenvolvida em um Samsung Galaxy s9 plus.
+
+<h1 align="center">
+<img src="https://raw.githubusercontent.com/MicaelliMedeiros/FastFeet/master/mobile/.github/image1.jpg" width="30%" height="30%" /><img src="https://raw.githubusercontent.com/MicaelliMedeiros/FastFeet/master/mobile/.github/image3.jpg" width="30%" height="30%" /><img src="https://raw.githubusercontent.com/MicaelliMedeiros/FastFeet/master/mobile/.github/image4.jpg" width="30%" height="30%" />
+
+___
+
  
-</h1>
-
-
