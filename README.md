@@ -4,7 +4,7 @@
 
 <h3 align="center">
   Desafio 5: FastFeet Projeto Final
-  https://github.com/Rocketseat/bootcamp-gostack-desafio-03/raw/master/.github/logo.png
+    <img alt="Fastfeet" src="https://github.com/Rocketseat/bootcamp-gostack-desafio-03/raw/master/.github/logo.png" width="200px"/>
 </h3>
 
 ## :rocket: Sobre o desafio
