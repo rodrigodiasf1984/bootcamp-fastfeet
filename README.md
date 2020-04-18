@@ -65,8 +65,7 @@ Cadastrar, visualizar problemas referentes a entrega.
 
 ## :camera: Demonstração
 <h1 align="center">
-  
- />
+ 
 </h1>
 
 
