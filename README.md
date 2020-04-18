@@ -49,12 +49,13 @@ Cadastrar, visualizar problemas referentes a entrega.
 ## :clipboard: Iniciando a aplicação
 
 1. Clone o repositório com `git clone https://github.com/rodrigodiasf1984/Desafio06.git`
-2. Baixar o app Expo na Apple Store ou play store 
-2. Entre dentro da pasta do projeto com `cd Desafio06`
+2. Entre dentro da pasta do projeto e abra um terminal, para o backend é preciso 2x o terminal `cd backend, cd frontend, cd mobile`
 3. Instale todas as dependencias com o comando `yarn`
-4. Digite `yarn start` para rodar o projeto
-5. Acesse a url `http://localhost:3000` para usar a aplicação
-6. Scannear o Qrcode com  a camera do telefone e clicar no icone para abrir com Expo
+4. Abra um terminal para backend API REST => Digite `yarn dev` para rodar o backend
+5. Abra um terminal para backend REDIS=> Digite `yarn queue` para iniciar as filas
+6. Abra um terminal para frontend =>Digite `yarn start` para iniciar o plataforma online
+7. Abrir o emulador do Android
+8. Abra um terminal para o Mobile => Digite `React-native run-android` para instalar o app no emulador
 
 ## :hammer: Ferramentas usadas
 
