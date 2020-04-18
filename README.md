@@ -17,18 +17,18 @@ Criar uma aplicação com **Node js**, **React JS**, **Reac-Native**.
   Funcionalidades Administrador:
 </h3>
 
-1.Gestão de entregadores
+1. Gestão de entregadores
 Cadastrar, editar, eliminar entregadores na plataforma.
 
-2.Gestão de encomendas
+2. Gestão de encomendas
 Cadastrar, editar, excluir, cancelar encomendas para os entregadores.
 Quando uma encomenda for cadastrada, o entregador deve receber um e-mail informando-o sobre a nova entrega atribuída ao mesmo.
 Quando uma encomenda for cancelada, o entregador deve receber um e-mail informando-o sobre o cancelamento.
 
-3.Gestão de destinatários
+3. Gestão de destinatários
 Cadastrar, editar, eliminar destinatários na plataforma.
 
-4:Gestão de problemas
+4. Gestão de problemas
 Visualizar
 
 <h3 align="center">
