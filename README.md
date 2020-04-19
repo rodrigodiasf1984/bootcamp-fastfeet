@@ -125,6 +125,7 @@ docker start fastfeet
 
 - ⚛️ **React-native** - É uma Biblioteca JavaScript para criar mobile Apps 
 - ⚛️ **ReactJs** - É uma Biblioteca Javascript para criar interfaces de usuário.
+- ⚛️ **React-native-camera** - É uma Biblioteca JavaScript para usar a camera.
 - 💅 **Styled Components** - É uma Biblioteca Javascript pra estilizar componentes.
 - 📄 **Axios** - É uma Biblioteca Javascript para fazer requisições http
 - 📄 **ESLint** - É uma Biblioteca Javascript para procurar e resolver problemas de identaçãô e outros no código
