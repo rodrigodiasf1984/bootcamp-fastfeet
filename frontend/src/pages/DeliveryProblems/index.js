@@ -33,21 +33,27 @@ export default function DeliveryProblems() {
   async function searchDeliveryProblems() {
     setLoading(true);
     let response=[];
+    let q=searchInput;
+
     try {
        response = await api.get('delivery/problems', {
         params: {
           page,
-          q: searchInput,
+          q,
         },
       });
       //console.tron.log(response.data);
     } catch (error) {
       console.tron.log(error);
     }
+
+    if(q){
+      if(response.data && response.data.length === 0 || response.data === undefined)
+      toast.error('Problema não encontrado, verifique os dados digitados!');
+    }
+
     if(response.data && response.data.length>0){
       setDeliveryProblems(response.data);
-    }else{
-      toast.error('Problema não encontrado, verifique os dados digitados!');
     }
 
     setLoading(false);

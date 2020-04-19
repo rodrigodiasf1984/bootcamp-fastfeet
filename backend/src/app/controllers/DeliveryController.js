@@ -189,7 +189,8 @@ class DeliveryController {
 
   async index(req, res) {
     const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
-    if (q) {
+
+    if (q !== "") {
       // buscar o deliveryman de acordo com o nome
       const deliveryByName = await Delivery.findAll({
         where: {

@@ -28,6 +28,7 @@ export default function Deliverymans() {
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const perPage=9;
+  let q = searchInput;
 
   async function searchDeliverymans() {
     setLoading(true);
@@ -36,17 +37,21 @@ export default function Deliverymans() {
        response = await api.get('deliverymans', {
         params: {
           page,
-          q: searchInput,
+          q,
         },
       });
 
     } catch (error) {
       console.tron.log(error);
     }
+
+    if(q){
+      if(response.data && response.data.length === 0 || response.data === undefined)
+      toast.error('Entregador não encontrado, verifique os dados digitados!');
+    }
+
     if(response.data && response.data.length>0){
       setDeliverymans(response.data);
-    }else{
-      toast.error('Entregador não encontrado, verifique os dados digitados!');
     }
 
     setLoading(false);

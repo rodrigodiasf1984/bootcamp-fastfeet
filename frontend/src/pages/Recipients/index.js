@@ -27,6 +27,7 @@ export default function Recipients() {
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const perPage=9;
+  let q = searchInput;
 
   async function searchRecipient() {
 
@@ -35,17 +36,21 @@ export default function Recipients() {
         response = await api.get('recipients', {
         params: {
           page,
-          q: searchInput,
+          q,
         },
       });
 
     } catch (error) {
       console.tron.log(error);
     }
+
+    if(q){
+      if(response.data && response.data.length === 0 || response.data === undefined)
+      toast.error('Destinatário não encontrado, verifique os dados digitados!');
+    }
+
     if(response.data && response.data.length>0){
       setRecipient(response.data);
-    }else{
-      toast.error('Destinatário não encontrado, verifique os dados digitados!');
     }
 
     setLoading(false);

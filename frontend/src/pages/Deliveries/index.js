@@ -35,11 +35,12 @@ export default function Deliveries() {
   async function searchDeliveries() {
     setLoading(true);
     let response=[];
+    let q = searchInput;
     try {
        response = await api.get('deliveries', {
         params: {
           page,
-          q: searchInput,
+          q,
         },
       });
       //console.tron.log(response.data);
@@ -66,8 +67,11 @@ export default function Deliveries() {
         setDeliveries(response.data);
         return delivery;
       });
-    }else{
-      toast.error('Entrega não encontrada, verifique os dados digitados!');
+    }
+
+    if(q){
+      if(response.data && response.data.length === 0 || response.data === undefined)
+      toast.error('Encomenda não encontrada!');
     }
 
     setLoading(false);
