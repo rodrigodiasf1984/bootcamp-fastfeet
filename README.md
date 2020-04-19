@@ -136,8 +136,10 @@ docker start fastfeet
 - 📄 **React Navigation V5** - Permite trabalhar com rotas e navegação no react-native. 
 
 ## :camera: Demonstração
+
 <h1 align="center">
- Gif/fastfeet.gif
+  <img alt="FastFeet" src="https://github.com/rodrigodiasf1984/bootcamp-fastfeet/blob/master/Gif/fastfeet.gif"
+ />
 </h1>
 
 <h3 align="center">
