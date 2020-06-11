@@ -12,7 +12,7 @@
 
 ## :rocket: Sobre o desafio
 
-Criar uma aplicação com **Node js**, **React JS**, **Reac-Native**.
+Criar uma aplicação com **Node js**, **React JS**, **React-Native**.
 
 <h3 align="center">
   Funcionalidades do Administrador:
