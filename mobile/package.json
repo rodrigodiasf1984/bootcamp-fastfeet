@@ -20,7 +20,7 @@
     "immer": "^8.0.1",
     "prop-types": "^15.7.2",
     "react": "16.11.0",
-    "react-native": "0.62.2",
+    "react-native": "0.62.3",
     "react-native-camera": "^3.23.1",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-image-resizer": "^1.2.1",
